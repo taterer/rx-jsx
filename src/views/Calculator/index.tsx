@@ -4,6 +4,13 @@ import { toElement$, fromValueElementKeyup$ } from '../../jsx'
 
 const lineItemClass = css`max-width: 400px;`
 
+function toDollar (str: number) {
+  return `$${Math.round(str * 100) / 100}`
+    .replace(/(^[^.]*$)/, '$1.00')
+    .replace(/\.(.{0,2}).*/, '.$100')
+    .replace(/(\...).*/, '$1')
+}
+
 export default function Routes ({ destruction$ }) {
   const [principal$] = toElement$(destruction$)
   const [interest$] = toElement$(destruction$)
@@ -22,7 +29,7 @@ export default function Routes ({ destruction$ }) {
         const i = parseFloat(interest as string)/100
         const t = parseFloat(term as string)
         const result = p*i/12/(1-Math.pow(1+i/12,-t*12))
-        setResult(<div>{isNaN(result) ? 'TBD' : `$${Math.round(result * 100) / 100}00`.replace(/(\...).*/, '$1')}</div>)
+        setResult(<div>{isNaN(result) ? 'TBD' : toDollar(result)}</div>)
       } catch (err) {
         setResult(<div>Err</div>)
       }
