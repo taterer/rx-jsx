@@ -1,5 +1,5 @@
 import { css } from '@emotion/css'
-import { combineLatest } from 'rxjs'
+import { combineLatest, takeUntil } from 'rxjs'
 import { toElement$, fromValueElementKeyup$ } from '../../jsx'
 
 const lineItemClass = css`max-width: 400px;`
@@ -21,7 +21,9 @@ export default function Routes ({ destruction$ }) {
     fromValueElementKeyup$(principal$),
     fromValueElementKeyup$(interest$),
     fromValueElementKeyup$(term$),
-  ])
+  ]).pipe(
+    takeUntil(destruction$)
+  )
   .subscribe({
     next: ([principal, interest, term]) => {
       try {

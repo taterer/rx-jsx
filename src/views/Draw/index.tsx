@@ -51,7 +51,8 @@ export default function ({ destruction$ }) {
 
   fromEventElement$(canvas$, 'mousemove').pipe(
     combineLatestWith(stroke$, canvasContext$, offset$),
-  ).subscribe({
+    takeUntil(destruction$),
+    ).subscribe({
     next: ([mousemove, stroke, canvasContext, offset]: any) => {
       if (stroke) {
         canvasContext.lineTo(mousemove.pageX - offset.x, mousemove.pageY - offset.y)
