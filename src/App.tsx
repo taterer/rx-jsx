@@ -45,8 +45,8 @@ export default function App () {
       justify-content: center;
       align-items: center;
     `}>
-      <nav class="blue lighten-2">
-          <ul id="nav-mobile">
+      <nav class='blue lighten-2'>
+          <ul id='nav-mobile'>
             <li element$={home$}><a class='waves-effect waves-light' onClick={() => history.pushState({}, '', '/')}>Home</a></li>
             <li element$={calc$}><a class='waves-effect waves-light' onClick={() => history.pushState({}, '', '/calc')}>Calculator</a></li>
             <li element$={draw$}><a class='waves-effect waves-light' onClick={() => history.pushState({}, '', '/draw')}>Draw</a></li>

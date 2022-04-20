@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@emotion/css": "^11.9.0",
-    "rxjs": "^7.5.5"
+    "rxjs": "^7.5.5",
+    "uuid": "^8.3.2"
   }
 }

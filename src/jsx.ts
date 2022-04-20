@@ -1,13 +1,13 @@
-import { fromEvent, pluck, Subject, switchMap, takeUntil, tap, withLatestFrom } from "rxjs";
+import { fromEvent, pluck, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 
 // Critical JSX replacement
 
 (window as any).createElement = (tag, props, ...children) => {
-  if (typeof tag === "function") return tag(props, ...children);
+  if (typeof tag === 'function') return tag(props, ...children);
   const element = document.createElement(tag);
 
   Object.entries(props || {}).forEach(([name, value]) => {
-    if (name.startsWith("on") && name.toLowerCase() in window) {
+    if (name.startsWith('on') && name.toLowerCase() in window) {
       element.addEventListener(name.toLowerCase().substr(2), value);
     }
     else if (name === 'element$') {

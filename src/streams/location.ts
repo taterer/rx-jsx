@@ -3,10 +3,10 @@ import { mergeWith, shareReplay, map, distinctUntilChanged, share } from 'rxjs/o
 
 export const pathname$ = createPathnameStream()
 
-export const _firstPath_ = map((pathname: string) => pathname.replace(/^\/*([^/]*).*/g, '$1'))
+export const _mapToFirstPath_ = map((pathname: string) => pathname.replace(/^\/*([^/]*).*/g, '$1'))
 
 export const firstPathChange$ = pathname$.pipe(
-  _firstPath_,
+  _mapToFirstPath_,
   distinctUntilChanged(),
   share()
 )

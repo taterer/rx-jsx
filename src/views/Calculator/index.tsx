@@ -43,16 +43,16 @@ export default function Routes ({ destruction$ }) {
       <p>Mortgage Calculator</p>
       <div>
         <div class={lineItemClass}>
-          <label for="principal">Principal</label>
-          <input id="principal" element$={principal$} placeholder="0" type="number" />
+          <label for='principal'>Principal</label>
+          <input id='principal' element$={principal$} placeholder='0' type='number' />
         </div>
         <div class={lineItemClass}>
-          <label for="interest">Interest</label>
-          <input id="interest" element$={interest$} placeholder="0" type="number" />
+          <label for='interest'>Interest</label>
+          <input id='interest' element$={interest$} placeholder='0' type='number' />
         </div>
         <div class={lineItemClass}>
-          <label for="term">Term (years)</label>
-          <input id="term" element$={term$} placeholder="0" type="number" />
+          <label for='term'>Term (years)</label>
+          <input id='term' element$={term$} placeholder='0' type='number' />
         </div>
         <div class={css`
           display: flex;
