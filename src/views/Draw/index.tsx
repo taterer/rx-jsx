@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 import { animationFrameScheduler, from } from 'rxjs';
-import { combineLatestWith, concatMap, filter, map, mergeWith, scan, share, switchMap, takeUntil } from 'rxjs/operators';
+import { combineLatestWith, concatMap, delay, filter, map, mergeWith, scan, share, switchMap, takeUntil } from 'rxjs/operators';
 import { fromEventElement$, toElement$ } from '../../jsx';
 import { Tables } from '../../repositories';
 import { _mapToPersistable_, _withIndexedDB_, _persist_, indexedDB$ } from '../../streams/repository';
@@ -94,7 +94,8 @@ export default function ({ destruction$ }) {
     })),
     takeUntil(destruction$),
     switchMap(strokes => from(strokes)),
-    combineLatestWith(canvasContext$)
+    combineLatestWith(canvasContext$),
+    delay(0)
   ).subscribe({
     next: ([stroke, canvasContext]) => {
       draw(canvasContext, stroke)
