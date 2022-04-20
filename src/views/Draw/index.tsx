@@ -2,7 +2,7 @@ import { css } from '@emotion/css';
 import { animationFrameScheduler, from } from 'rxjs';
 import { combineLatestWith, concatMap, filter, map, mergeWith, scan, share, switchMap, takeUntil } from 'rxjs/operators';
 import { fromEventElement$, toElement$ } from '../../jsx';
-import { Persistable, Tables } from '../../repositories';
+import { Tables } from '../../repositories';
 import { _mapToPersistable_, _withIndexedDB_, _persist_, indexedDB$ } from '../../streams/repository';
 import { viewport$ } from '../../streams/viewport';
 
@@ -26,6 +26,7 @@ function draw (canvasContext, stroke) {
 export default function ({ destruction$ }) {
   const [canvas$] = toElement$(destruction$)
   const [clear$] = toElement$(destruction$)
+  const [pending$, setPending] = toElement$(destruction$)
 
   const canvasContext$ = canvas$.pipe(
     map((canvas: any) => canvas.getContext('2d'))
@@ -73,6 +74,8 @@ export default function ({ destruction$ }) {
     }
   })
 
+  // Begin persistence
+
   stroke$.pipe(
     filter(stroke => !!stroke.stroke || stroke.close || stroke.begin),
     _mapToPersistable_,
@@ -102,21 +105,30 @@ export default function ({ destruction$ }) {
     takeUntil(destruction$),
     combineLatestWith(canvas$, canvasContext$, indexedDB$)
   ).subscribe({
-    next: async ([clear, canvas, canvasContext, db]: any) => {
+    next: async ([_, canvas, canvasContext, db]: any) => {
+      setPending(<h1 class={css`
+        position: absolute;
+        margin: 220px;
+      `}>
+        Clearing ...
+      </h1>)
       canvasContext.clearRect(0, 0, canvas.width, canvas.height)
       const strokes = await db.query(Tables.strokes)
       await Promise.all(strokes.map((stroke: any) => db.remove(Tables.strokes, stroke.id)))
-      alert('Cleared')
+      setPending(<div />)
     }
   })
 
+  // End persistence
+
   return <div>
+    <div element$={pending$} />
     <canvas element$={canvas$}
       class={css`
         background-color: #eee;
       `}
       width={750}
       height={750} />
-    <a class='btn blue waves-effect waves-light' element$={clear$}>Clear</a>
+    <a class='btn blue waves-effect waves-light right' element$={clear$}>Clear</a>
   </div>
 }
