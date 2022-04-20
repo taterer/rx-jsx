@@ -47,8 +47,8 @@ export function toElement$ (destruction$): [Subject<Element>, ((next: any) => vo
   )
   .subscribe({
     next: ([toBe, current]) => {
-      element$.next(toBe)
       current.replaceWith(toBe)
+      element$.next(toBe)
     }
   })
 

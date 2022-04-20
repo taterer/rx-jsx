@@ -3,6 +3,7 @@ import { EMPTY } from 'rxjs'
 import { toElement$ } from '../jsx'
 import { firstPathChange$ } from '../streams/location'
 import Calculator from './Calculator'
+import Draw from './Draw'
 import Home from './Home'
 import NotFound from './NotFound'
 
@@ -15,6 +16,8 @@ export default function Routes() {
         setRoute(<Home destruction$={firstPathChange$} />)
       } else if (/calc/.test(firstPath)) {
         setRoute(<Calculator destruction$={firstPathChange$} />)
+      } else if (/draw/.test(firstPath)) {
+        setRoute(<Draw destruction$={firstPathChange$} />)
       } else {
         setRoute(<NotFound />)
       }
