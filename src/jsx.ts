@@ -38,21 +38,21 @@ const appendChild = (parent, child) => {
 // Helper functions
 
 export function toElement$ (destruction$): [Subject<Element>, ((next: any) => void)] {
-  const routeDom$ = new Subject<Element>()
-  const route$ = new Subject<Element>()
+  const element$ = new Subject<Element>()
+  const elementQueue$ = new Subject<Element>()
 
-  route$.pipe(
-    withLatestFrom(routeDom$),
+  elementQueue$.pipe(
+    withLatestFrom(element$),
     takeUntil(destruction$)
   )
   .subscribe({
     next: ([toBe, current]) => {
-      routeDom$.next(toBe)
+      element$.next(toBe)
       current.replaceWith(toBe)
     }
   })
 
-  return [routeDom$, i => route$.next(i)]
+  return [element$, i => elementQueue$.next(i)]
 }
 
 export function fromEventElement$ (target$: Subject<Element>, eventName: string) {

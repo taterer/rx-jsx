@@ -1,7 +1,7 @@
 import { css, cx } from '@emotion/css'
-import { distinctUntilChanged, share, EMPTY } from 'rxjs'
+import { EMPTY } from 'rxjs'
 import { toElement$ } from '../jsx'
-import { pathname$, _firstPath_ } from '../streams/location'
+import { firstPathChange$ } from '../streams/location'
 import Calculator from './Calculator'
 import Home from './Home'
 import NotFound from './NotFound'
@@ -9,18 +9,12 @@ import NotFound from './NotFound'
 export default function Routes() {
   const [route$, setRoute] = toElement$(EMPTY)
 
-  const newPath$ = pathname$.pipe(
-    _firstPath_,
-    distinctUntilChanged(),
-    share()
-  )
-
-  newPath$.subscribe({
+  firstPathChange$.subscribe({
     next: firstPath => {
       if (firstPath === '') {
-        setRoute(<Home destruction$={newPath$} />)
+        setRoute(<Home destruction$={firstPathChange$} />)
       } else if (/calc/.test(firstPath)) {
-        setRoute(<Calculator destruction$={newPath$} />)
+        setRoute(<Calculator destruction$={firstPathChange$} />)
       } else {
         setRoute(<NotFound />)
       }

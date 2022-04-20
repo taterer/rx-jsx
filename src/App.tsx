@@ -1,11 +1,33 @@
 import { css } from '@emotion/css'
+import { EMPTY, withLatestFrom } from 'rxjs'
 import Routes from './views/Routes'
+import { firstPathChange$ } from './streams/location'
+import { toElement$ } from './jsx'
 
 export default function App () {
-  // const [homeButton$] = toElement$(EMPTY)
-  // fromEventElement$(homeButton$, 'click').subscribe({
-  //   next: () => history.pushState({}, '', '/')
-  // })
+  const [home$] = toElement$(EMPTY)
+  const [calc$] = toElement$(EMPTY)
+  const [else$] = toElement$(EMPTY)
+
+  firstPathChange$.pipe(
+    withLatestFrom(home$, calc$, else$)
+  ).subscribe({
+    next: ([firstPath, home, calc, elsewhere]) => {
+      if (firstPath === '') {
+        home.classList.add('active')
+        calc.classList.remove('active')
+        elsewhere.classList.remove('active')
+      } else if (/calc/.test(firstPath)) {
+        home.classList.remove('active')
+        calc.classList.add('active')
+        elsewhere.classList.remove('active')
+      } else {
+        home.classList.remove('active')
+        calc.classList.remove('active')
+        elsewhere.classList.add('active')
+      }
+    }
+  })
 
   return (
     <div class={css`
@@ -14,18 +36,11 @@ export default function App () {
       justify-content: center;
       align-items: center;
     `}>
-      {/* <div class={css`
-        padding: 20px;
-        width: 100%;
-        max-width: 800px;
-        align-self: center;
-        background-color: white;
-      `}> */}
       <nav class="blue lighten-2">
           <ul id="nav-mobile">
-            <li><a class='btn waves-effect waves-light blue darken-2' onClick={() => history.pushState({}, '', '/')}>Home</a></li>
-            <li><a class='btn waves-effect waves-light blue darken-2' onClick={() => history.pushState({}, '', '/calc')}>Calculator</a></li>
-            <li><a class='btn waves-effect waves-light blue darken-2' onClick={() => history.pushState({}, '', '/asdf')}>Elsewhere</a></li>
+            <li element$={home$}><a class='waves-effect waves-light' onClick={() => history.pushState({}, '', '/')}>Home</a></li>
+            <li element$={calc$}><a class='waves-effect waves-light' onClick={() => history.pushState({}, '', '/calc')}>Calculator</a></li>
+            <li element$={else$}><a class='waves-effect waves-light' onClick={() => history.pushState({}, '', '/asdf')}>Elsewhere</a></li>
           </ul>
       </nav>
       <Routes />

@@ -1,9 +1,15 @@
 import { fromEvent, Observable } from 'rxjs'
-import { mergeWith, shareReplay, map } from 'rxjs/operators'
+import { mergeWith, shareReplay, map, distinctUntilChanged, share } from 'rxjs/operators'
 
 export const pathname$ = createPathnameStream()
 
 export const _firstPath_ = map((pathname: string) => pathname.replace(/^\/*([^/]*).*/g, '$1'))
+
+export const firstPathChange$ = pathname$.pipe(
+  _firstPath_,
+  distinctUntilChanged(),
+  share()
+)
 
 export function createPathnameStream () {
   const load$ = fromEvent(window, 'load')
