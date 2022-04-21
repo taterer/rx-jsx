@@ -3,8 +3,10 @@ import { animationFrameScheduler, from } from 'rxjs';
 import { combineLatestWith, concatMap, delay, filter, map, mergeWith, scan, share, switchMap, takeUntil } from 'rxjs/operators';
 import { fromEventElement$, toElement$ } from '../../jsx';
 import { Tables } from '../../repositories';
-import { _mapToPersistable_, _withIndexedDB_, _persist_, indexedDB$ } from '../../streams/repository';
+import { _mapToPersistable_, _withIndexedDB_, _concatMapPersist_, indexedDB$ } from '../../streams/repository';
 import { viewport$ } from '../../streams/viewport';
+import { MDCRipple } from '@material/ripple';
+import Button from '../../components/Button';
 
 function draw (canvasContext, stroke) {
   if (stroke.begin) {
@@ -27,6 +29,10 @@ export default function ({ destruction$ }) {
   const [canvas$] = toElement$(destruction$)
   const [clear$] = toElement$(destruction$)
   const [pending$, setPending] = toElement$(destruction$)
+
+  clear$.subscribe({
+    next: clear => new MDCRipple(clear)
+  })
 
   const canvasContext$ = canvas$.pipe(
     map((canvas: any) => canvas.getContext('2d'))
@@ -74,13 +80,11 @@ export default function ({ destruction$ }) {
     }
   })
 
-  // Begin persistence
-
   stroke$.pipe(
     filter(stroke => !!stroke.stroke || stroke.close || stroke.begin),
     _mapToPersistable_,
     _withIndexedDB_,
-    _persist_.strokes,
+    _concatMapPersist_(Tables.strokes),
     takeUntil(destruction$),
   ).subscribe()
 
@@ -120,8 +124,6 @@ export default function ({ destruction$ }) {
     }
   })
 
-  // End persistence
-
   return <div>
     <div element$={pending$} />
     <canvas element$={canvas$}
@@ -130,6 +132,6 @@ export default function ({ destruction$ }) {
       `}
       width={750}
       height={750} />
-    <a class='btn blue waves-effect waves-light right' element$={clear$}>Clear</a>
+    <Button button$={clear$} title='Clear' />
   </div>
 }

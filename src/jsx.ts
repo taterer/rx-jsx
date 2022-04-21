@@ -9,8 +9,7 @@ import { fromEvent, pluck, Subject, switchMap, takeUntil, tap, withLatestFrom } 
   Object.entries(props || {}).forEach(([name, value]) => {
     if (name.startsWith('on') && name.toLowerCase() in window) {
       element.addEventListener(name.toLowerCase().substr(2), value);
-    }
-    else if (name === 'element$') {
+    } else if (name === 'element$') {
       const observable = value as any
       if (observable && observable.next && typeof observable.next === 'function') {
         observable.next(element)

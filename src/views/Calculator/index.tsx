@@ -1,8 +1,7 @@
 import { css } from '@emotion/css'
 import { combineLatest, takeUntil } from 'rxjs'
+import Textfield from '../../components/Textfield'
 import { toElement$, fromValueElementKeyup$ } from '../../jsx'
-
-const lineItemClass = css`max-width: 400px;`
 
 function toDollar (str: number) {
   return `$${Math.round(str * 100) / 100}`
@@ -41,19 +40,14 @@ export default function Routes ({ destruction$ }) {
   return (
     <div>
       <p>Mortgage Calculator</p>
-      <div>
-        <div class={lineItemClass}>
-          <label for='principal'>Principal</label>
-          <input id='principal' element$={principal$} placeholder='0' type='number' />
-        </div>
-        <div class={lineItemClass}>
-          <label for='interest'>Interest</label>
-          <input id='interest' element$={interest$} placeholder='0' type='number' />
-        </div>
-        <div class={lineItemClass}>
-          <label for='term'>Term (years)</label>
-          <input id='term' element$={term$} placeholder='0' type='number' />
-        </div>
+      <div class={css`
+          display: flex;
+          flex-direction: column;
+          max-width: 400px;
+        `}>
+        <Textfield input$={principal$} title="Principal" />
+        <Textfield input$={interest$} title="Interest" />
+        <Textfield input$={term$} title="Term (in years)" />
         <div class={css`
           display: flex;
           flex-direction: row;
