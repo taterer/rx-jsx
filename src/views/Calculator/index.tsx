@@ -11,7 +11,7 @@ function toDollar (str: number) {
     .replace(/(\...).*/, '$1')
 }
 
-export default function Routes ({ destruction$ }) {
+export default function Calculator ({ destruction$ }) {
   const [principal$] = toElement$(destruction$)
   const [interest$] = toElement$(destruction$)
   const [term$] = toElement$(destruction$)
@@ -21,7 +21,8 @@ export default function Routes ({ destruction$ }) {
     fromValueElementKeyup$(principal$),
     fromValueElementKeyup$(interest$),
     fromValueElementKeyup$(term$),
-  ]).pipe(
+  ])
+  .pipe(
     takeUntil(destruction$)
   )
   .subscribe({
@@ -44,15 +45,15 @@ export default function Routes ({ destruction$ }) {
       <div>
         <div class={lineItemClass}>
           <label for='principal'>Principal</label>
-          <input id='principal' element$={principal$} placeholder='0' type='number' />
+          <input id='principal' element$={principal$} placeholder='0' />
         </div>
         <div class={lineItemClass}>
           <label for='interest'>Interest</label>
-          <input id='interest' element$={interest$} placeholder='0' type='number' />
+          <input id='interest' element$={interest$} placeholder='0' />
         </div>
         <div class={lineItemClass}>
           <label for='term'>Term (years)</label>
-          <input id='term' element$={term$} placeholder='0' type='number' />
+          <input id='term' element$={term$} placeholder='0' />
         </div>
         <div class={css`
           display: flex;

@@ -5,7 +5,8 @@ export const pathname$ = createPathnameStream()
 
 export const _mapToFirstPath_ = map((pathname: string) => pathname.replace(/^\/*([^/]*).*/g, '$1'))
 
-export const firstPathChange$ = pathname$.pipe(
+export const firstPathChange$ = pathname$
+.pipe(
   _mapToFirstPath_,
   distinctUntilChanged(),
   share()
@@ -14,7 +15,8 @@ export const firstPathChange$ = pathname$.pipe(
 export function createPathnameStream () {
   const load$ = fromEvent(window, 'load')
   const popstate$ = fromEvent(window, 'popstate')
-  const cleanLoadAndPopstate$ = load$.pipe(
+  const cleanLoadAndPopstate$ = load$
+  .pipe(
     mergeWith(popstate$),
     map((event: any) => event.target.location.pathname)
   )
@@ -32,7 +34,8 @@ export function createPathnameStream () {
         return replaceState.apply(history, arguments);
       }
     })(window.history)
-  }).pipe(
+  })
+  .pipe(
     mergeWith(cleanLoadAndPopstate$),
     shareReplay(1) /* ensures it only replaces the browser functions once,
     and provides the latest state to new subscribers */

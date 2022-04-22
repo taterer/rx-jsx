@@ -23,16 +23,18 @@ function draw (canvasContext, stroke) {
   }
 }
 
-export default function ({ destruction$ }) {
+export default function Draw ({ destruction$ }) {
   const [canvas$] = toElement$(destruction$)
   const [clear$] = toElement$(destruction$)
   const [pending$, setPending] = toElement$(destruction$)
 
-  const canvasContext$ = canvas$.pipe(
+  const canvasContext$ = canvas$
+  .pipe(
     map((canvas: any) => canvas.getContext('2d'))
   )
   
-  const offset$ = viewport$.pipe(
+  const offset$ = viewport$
+  .pipe(
     combineLatestWith(canvas$),
     concatMap(async ([_, canvas]) => {
       return await new Promise(resolve => {
@@ -44,7 +46,8 @@ export default function ({ destruction$ }) {
     })
   )
 
-  const isStroke$ = fromEventElement$(canvas$, 'mousedown').pipe(
+  const isStroke$ = fromEventElement$(canvas$, 'mousedown')
+  .pipe(
     mergeWith(fromEventElement$(canvas$, 'mouseup'), fromEventElement$(canvas$, 'mouseleave')),
     map(event => {
       if (event.type === 'mousedown') return true
@@ -53,7 +56,8 @@ export default function ({ destruction$ }) {
     })
   )
 
-  const stroke$ = fromEventElement$(canvas$, 'mousemove').pipe(
+  const stroke$ = fromEventElement$(canvas$, 'mousemove')
+  .pipe(
     combineLatestWith(isStroke$, offset$),
     map(([mousemove, stroke, offset]: any) => ({ x: mousemove.pageX - offset.x, y: mousemove.pageY - offset.y, stroke })),
     scan((acc, current) => {
@@ -64,7 +68,8 @@ export default function ({ destruction$ }) {
     share()
   )
 
-  stroke$.pipe(
+  stroke$
+  .pipe(
     filter(stroke => !!stroke.stroke),
     combineLatestWith(canvasContext$),
     takeUntil(destruction$),
@@ -76,7 +81,8 @@ export default function ({ destruction$ }) {
 
   // Begin persistence
 
-  stroke$.pipe(
+  stroke$
+  .pipe(
     filter(stroke => !!stroke.stroke || stroke.close || stroke.begin),
     _mapToPersistable_,
     _withIndexedDB_,
@@ -84,7 +90,8 @@ export default function ({ destruction$ }) {
     takeUntil(destruction$),
   ).subscribe()
 
-  indexedDB$.pipe(
+  indexedDB$
+  .pipe(
     concatMap(db => db.query(Tables.strokes)),
     map((strokes: any[]) => strokes.sort((a, b) => {
       if (a.created_at === b.created_at && (a.begin || b.close)) {
@@ -96,16 +103,19 @@ export default function ({ destruction$ }) {
     switchMap(strokes => from(strokes)),
     combineLatestWith(canvasContext$),
     delay(0)
-  ).subscribe({
+  )
+  .subscribe({
     next: ([stroke, canvasContext]) => {
       draw(canvasContext, stroke)
     }
   })
 
-  fromEventElement$(clear$, 'click').pipe(
+  fromEventElement$(clear$, 'click')
+  .pipe(
     takeUntil(destruction$),
     combineLatestWith(canvas$, canvasContext$, indexedDB$)
-  ).subscribe({
+  )
+  .subscribe({
     next: async ([_, canvas, canvasContext, db]: any) => {
       setPending(<h1 class={css`
         position: absolute;

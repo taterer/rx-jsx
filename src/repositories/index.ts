@@ -6,17 +6,11 @@ export type Persistable = {
 }
 
 export type Persistence = {
-
   indexedDB?: any
-
   put: (tableName: string, key: string | object, value: any) => Promise<object>
-
   get: (tableName: string, key: string | object) => Promise<object>
-
   query: (tableName: string, key?: string | object) => Promise<object[]>
-
   remove: (tableName: string, key: string | object) => Promise<object>
-
 }
 
 export enum Tables {

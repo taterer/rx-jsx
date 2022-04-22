@@ -41,7 +41,8 @@ export function toElement$ (destruction$): [Subject<Element>, ((next: any) => vo
   const element$ = new Subject<Element>()
   const elementQueue$ = new Subject<Element>()
 
-  elementQueue$.pipe(
+  elementQueue$
+  .pipe(
     withLatestFrom(element$),
     takeUntil(destruction$)
   )
@@ -56,13 +57,15 @@ export function toElement$ (destruction$): [Subject<Element>, ((next: any) => vo
 }
 
 export function fromEventElement$ (target$: Subject<Element>, eventName: string) {
-  return target$.pipe(
+  return target$
+  .pipe(
     switchMap(target => fromEvent(target, eventName))
   )
 }
 
 export function fromValueElementKeyup$ (target$: Subject<Element>) {
-  return target$.pipe(
+  return target$
+  .pipe(
     switchMap(target => fromEvent(target, 'keyup').pipe(pluck('target', 'value')))
   )
 }
