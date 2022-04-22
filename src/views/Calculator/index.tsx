@@ -10,7 +10,7 @@ function toDollar (str: number) {
     .replace(/(\...).*/, '$1')
 }
 
-export default function Routes ({ destruction$ }) {
+export default function Calculator ({ destruction$ }) {
   const [principal$] = toElement$(destruction$)
   const [interest$] = toElement$(destruction$)
   const [term$] = toElement$(destruction$)
@@ -22,8 +22,7 @@ export default function Routes ({ destruction$ }) {
     fromValueElementKeyup$(term$),
   ]).pipe(
     takeUntil(destruction$)
-  )
-  .subscribe({
+  ).subscribe({
     next: ([principal, interest, term]) => {
       try {
         const p = parseFloat(principal as string)

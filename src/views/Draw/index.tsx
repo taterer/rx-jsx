@@ -25,7 +25,7 @@ function draw (canvasContext, stroke) {
   }
 }
 
-export default function ({ destruction$ }) {
+export default function Draw ({ destruction$ }) {
   const [canvas$] = toElement$(destruction$)
   const [clear$] = toElement$(destruction$)
   const [pending$, setPending] = toElement$(destruction$)
