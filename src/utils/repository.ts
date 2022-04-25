@@ -24,7 +24,7 @@ export type Stroke = Persistable & {
   stroke: boolean
 }
 
-export async function indexedDbPersistence () {
+async function indexedDbPersistence () {
   const databaseName = 'db-jsx-rxjs'
 
   try {
