@@ -2,9 +2,9 @@ import { css } from '@emotion/css';
 import { animationFrameScheduler, from } from 'rxjs';
 import { combineLatestWith, concatMap, delay, filter, map, mergeWith, scan, share, switchMap, takeUntil } from 'rxjs/operators';
 import { fromEventElement$, toElement$ } from '../../jsx';
-import { Tables } from '../../repositories';
-import { _mapToPersistable_, _withIndexedDB_, _persist_, indexedDB$ } from '../../streams/repository';
-import { viewport$ } from '../../streams/viewport';
+import { Persistence, Tables } from '../../utils/repository';
+import { _mapToPersistable_, _withIndexedDB_, _concatMapPersist_, indexedDB$ } from '../../utils/repository';
+import { viewport$ } from '../../observables/viewport';
 
 function draw (canvasContext, stroke) {
   if (stroke.begin) {
@@ -86,13 +86,13 @@ export default function Draw ({ destruction$ }) {
     filter(stroke => !!stroke.stroke || stroke.close || stroke.begin),
     _mapToPersistable_,
     _withIndexedDB_,
-    _persist_.strokes,
+    _concatMapPersist_(Tables.strokes),
     takeUntil(destruction$),
   ).subscribe()
 
   indexedDB$
   .pipe(
-    concatMap(db => db.query(Tables.strokes)),
+    concatMap((db: Persistence) => db.query(Tables.strokes)),
     map((strokes: any[]) => strokes.sort((a, b) => {
       if (a.created_at === b.created_at && (a.begin || b.close)) {
         return -1

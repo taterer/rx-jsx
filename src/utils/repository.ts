@@ -1,4 +1,7 @@
+import { v4 as uuid } from 'uuid'
+import { from } from 'rxjs'
 import { indexedDBfactory } from '../utils/indexedDB'
+import { combineLatestWith, concatMap, map } from 'rxjs/operators'
 
 export type Persistable = {
   id: string
@@ -17,7 +20,9 @@ export enum Tables {
   strokes = 'strokes'
 }
 
-export const indexedDB = indexedDbPersistence()
+export type Stroke = Persistable & {
+  stroke: boolean
+}
 
 export async function indexedDbPersistence () {
   const databaseName = 'db-jsx-rxjs'
@@ -40,6 +45,20 @@ export async function indexedDbPersistence () {
   }
 }
 
-export type Stroke = Persistable & {
-  stroke: boolean
+export const indexedDB$ = from(indexedDbPersistence())
+
+export const _withIndexedDB_ = combineLatestWith<Persistable, [Persistence]>(indexedDB$)
+
+export const _mapToPersistable_ = map<any, Persistable>(value => {
+  if (!value.id) {
+    value.id = uuid()
+  }
+  if (!value.created_at) {
+    value.created_at = Date.now()
+  }
+  return value
+})
+
+export function _concatMapPersist_ (tableName: string) {
+  return concatMap<[Persistable, Persistence], any>(([value, persistence]) => persistence.put(tableName, { id: value.id }, value))
 }

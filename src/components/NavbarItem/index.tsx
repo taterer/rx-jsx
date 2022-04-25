@@ -1,7 +1,7 @@
 import { takeUntil, withLatestFrom } from 'rxjs'
-import { firstPathChange$ } from '../../streams/location'
+import { firstPathChange$ } from '../../observables/location'
 import { toElement$ } from '../../jsx'
-import { RouteRegExp } from '../../utils/routes';
+import { RouteRegExp } from '../../utils/route';
 
 export default function NavbarItem ({ destruction$, title, path }) {
   const [navbarItem$] = toElement$(destruction$)

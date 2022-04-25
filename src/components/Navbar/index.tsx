@@ -1,5 +1,5 @@
 import NavbarItem from '../NavbarItem'
-import { Route } from '../../utils/routes'
+import { Route } from '../../utils/route'
 
 export default function Navbar ({ destruction$ }) {
   return (
