@@ -1,4 +1,12 @@
-import { fromEvent, pluck, Subject, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
+import {
+  animationFrameScheduler,
+  fromEvent,
+  pluck,
+  Subject,
+  switchMap,
+  takeUntil,
+  withLatestFrom
+} from 'rxjs';
 
 // Critical JSX replacement
 
@@ -34,7 +42,6 @@ const appendChild = (parent, child) => {
     parent.appendChild(child.nodeType ? child : document.createTextNode(child));
 };
 
-
 // Helper functions
 
 export function toElement$ (destruction$): [Subject<Element>, ((next: any) => void)] {
@@ -55,6 +62,14 @@ export function toElement$ (destruction$): [Subject<Element>, ((next: any) => vo
 
   return [element$, i => elementQueue$.next(i)]
 }
+
+export const _withAnimationFrame_ = switchMap(async (value) => {
+  return await new Promise(resolve => {
+    animationFrameScheduler.schedule(() => {
+      resolve(value)
+    })
+  })
+})
 
 export function fromEventElement$ (target$: Subject<Element>, eventName: string) {
   return target$

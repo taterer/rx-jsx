@@ -1,7 +1,17 @@
 import { css } from '@emotion/css';
-import { animationFrameScheduler, from } from 'rxjs';
-import { combineLatestWith, concatMap, delay, filter, map, mergeWith, scan, share, switchMap, takeUntil } from 'rxjs/operators';
-import { fromEventElement$, toElement$ } from '../../jsx';
+import {
+  combineLatestWith,
+  concatMap,
+  delay,
+  filter,
+  map,
+  mergeWith,
+  scan,
+  share,
+  switchMap,
+  takeUntil
+} from 'rxjs/operators';
+import { fromEventElement$, toElement$, _withAnimationFrame_ } from '../../jsx';
 import { Persistence, Tables } from '../../utils/repository';
 import { _mapToPersistable_, _withIndexedDB_, _concatMapPersist_, indexedDB$ } from '../../utils/repository';
 import { viewport$ } from '../../observables/viewport';
@@ -36,15 +46,12 @@ export default function Draw ({ destruction$ }) {
   
   const offset$ = viewport$
   .pipe(
+    _withAnimationFrame_,
     combineLatestWith(canvas$),
-    concatMap(async ([_, canvas]) => {
-      return await new Promise(resolve => {
-        animationFrameScheduler.schedule(() => {
-          const boundingClientRect = canvas.getBoundingClientRect()
-          resolve({ x: boundingClientRect.left + window.pageXOffset, y: boundingClientRect.top + window.pageYOffset })
-        })
-      })
-    })
+    map(([_, canvas]) => {
+      const boundingClientRect = canvas.getBoundingClientRect()
+      return { x: boundingClientRect.left + window.pageXOffset, y: boundingClientRect.top + window.pageYOffset }
+    }),
   )
 
   const isStroke$ = fromEventElement$(canvas$, 'mousedown')
