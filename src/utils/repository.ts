@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import { from } from 'rxjs'
 import { indexedDBfactory } from '../utils/indexedDB'
-import { combineLatestWith, concatMap, map } from 'rxjs/operators'
+import { concatMap, map, withLatestFrom } from 'rxjs/operators'
 
 export type Persistable = {
   id: string
@@ -47,7 +47,7 @@ async function indexedDbPersistence () {
 
 export const indexedDB$ = from(indexedDbPersistence())
 
-export const _withIndexedDB_ = combineLatestWith<Persistable, [Persistence]>(indexedDB$)
+export const _withIndexedDB_ = withLatestFrom<Persistable, [Persistence]>(indexedDB$)
 
 export const _mapToPersistable_ = map<any, Persistable>(value => {
   if (!value.id) {
