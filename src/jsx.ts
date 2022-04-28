@@ -1,6 +1,7 @@
 import {
   animationFrameScheduler,
   fromEvent,
+  OperatorFunction,
   pluck,
   Subject,
   switchMap,
@@ -63,7 +64,7 @@ export function toElement$ (destruction$): [Subject<Element>, ((next: any) => vo
   return [element$, i => elementQueue$.next(i)]
 }
 
-export const _withAnimationFrame_ = switchMap(async (value) => {
+export const _withAnimationFrame_: OperatorFunction<any, any> = switchMap(async (value) => {
   return await new Promise(resolve => {
     animationFrameScheduler.schedule(() => {
       resolve(value)
