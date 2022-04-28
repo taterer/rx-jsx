@@ -5,6 +5,7 @@ import Home from '../../views/Home'
 import Calculator from '../../views/Calculator'
 import Draw from '../../views/Draw'
 import NotFound from '../../views/NotFound'
+import Babylon from '../../views/Babylon'
 
 export default function Router ({ destruction$ }) {
   const [route$, setRoute] = toElement$(destruction$)
@@ -17,6 +18,8 @@ export default function Router ({ destruction$ }) {
       setRoute(<Calculator destruction$={firstPathChange$} />)
     } else if (RouteRegExp.draw.test(firstPath)) {
       setRoute(<Draw destruction$={firstPathChange$} />)
+    } else if (RouteRegExp.babylon.test(firstPath)) {
+      setRoute(<Babylon destruction$={firstPathChange$} />)
     } else {
       setRoute(<NotFound />)
     }

@@ -1074,6 +1074,11 @@ babel-plugin-macros@^2.6.1:
     cosmiconfig "^6.0.0"
     resolve "^1.12.0"
 
+babylonjs@^5.3.0:
+  version "5.3.0"
+  resolved "https://registry.yarnpkg.com/babylonjs/-/babylonjs-5.3.0.tgz#c37a496b3f7946ed057d38bfe7b71efbeaf8a424"
+  integrity sha512-gzauToc9ymfxFXh/EhKD6bEYMrOqPpw6BX2E4UhN+bj+t/80dM+PWzGMsUio6njRIQvB4Lk06m7bDV0rmtcp9Q==
+
 base-x@^3.0.8:
   version "3.0.9"
   resolved "https://registry.yarnpkg.com/base-x/-/base-x-3.0.9.tgz#6349aaabb58526332de9f60995e548a53fe21320"
