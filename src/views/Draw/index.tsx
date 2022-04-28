@@ -1,16 +1,28 @@
 import { css } from '@emotion/css';
-import { animationFrameScheduler, from } from 'rxjs';
-import { combineLatestWith, concatMap, delay, filter, map, mergeWith, scan, share, switchMap, takeUntil } from 'rxjs/operators';
-import { fromEventElement$, toElement$ } from '../../jsx';
+import { from } from 'rxjs';
+import {
+  combineLatestWith,
+  concatMap,
+  delay,
+  filter,
+  map,
+  mergeWith,
+  scan,
+  share,
+  switchMap,
+  takeUntil
+} from 'rxjs/operators';
+import { fromEventElement$, toElement$, _withAnimationFrame_ } from '../../jsx';
 import { Persistence, Tables } from '../../utils/repository';
 import { _mapToPersistable_, _withIndexedDB_, _concatMapPersist_, indexedDB$ } from '../../utils/repository';
 import { viewport$ } from '../../observables/viewport';
+import { socketDraw$, subscribeServer, _withSocketConnection_ } from '../../utils/sockets';
 
-function draw (canvasContext, stroke) {
+function draw (canvasContext, stroke, strokeStyle = '#000000') {
   if (stroke.begin) {
     canvasContext.beginPath()
     canvasContext.moveTo(stroke.x, stroke.y)
-    canvasContext.strokeStyle = '#000000'
+    canvasContext.strokeStyle = strokeStyle
     canvasContext.lineWidth = 2
     canvasContext.lineCap = 'round'
   }
@@ -35,15 +47,12 @@ export default function Draw ({ destruction$ }) {
   
   const offset$ = viewport$
   .pipe(
+    _withAnimationFrame_,
     combineLatestWith(canvas$),
-    concatMap(async ([_, canvas]) => {
-      return await new Promise(resolve => {
-        animationFrameScheduler.schedule(() => {
-          const boundingClientRect = canvas.getBoundingClientRect()
-          resolve({ x: boundingClientRect.left + window.pageXOffset, y: boundingClientRect.top + window.pageYOffset })
-        })
-      })
-    })
+    map(([_, canvas]) => {
+      const boundingClientRect = canvas.getBoundingClientRect()
+      return { x: boundingClientRect.left + window.pageXOffset, y: boundingClientRect.top + window.pageYOffset }
+    }),
   )
 
   const isStroke$ = fromEventElement$(canvas$, 'mousedown')
@@ -73,9 +82,28 @@ export default function Draw ({ destruction$ }) {
     filter(stroke => !!stroke.stroke),
     combineLatestWith(canvasContext$),
     takeUntil(destruction$),
-    ).subscribe({
+  )
+  .subscribe({
     next: ([stroke, canvasContext]: any) => {
       draw(canvasContext, stroke)
+    }
+  })
+
+  stroke$
+  .pipe(
+    filter(stroke => !!stroke.stroke),
+    _withSocketConnection_,
+    takeUntil(destruction$)
+  )
+  .subscribe(subscribeServer('draw'))
+
+  socketDraw$
+  .pipe(
+    combineLatestWith(canvasContext$),
+    takeUntil(destruction$),
+  ).subscribe({
+    next: ([stroke, canvasContext]: any) => {
+      draw(canvasContext, stroke, '#ff0000')
     }
   })
 
@@ -90,6 +118,7 @@ export default function Draw ({ destruction$ }) {
     takeUntil(destruction$),
   ).subscribe()
 
+  // redraw
   indexedDB$
   .pipe(
     concatMap((db: Persistence) => db.query(Tables.strokes)),
