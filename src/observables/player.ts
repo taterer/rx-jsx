@@ -1,30 +1,56 @@
-import { EMPTY, Observable, shareReplay, Subject } from "rxjs";
-import { AddUnit, Unit, unitFactory } from "./unit";
+import { EMPTY, filter, Observable, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
+import { UnitFactory, unitFactory } from "./unit";
 
-interface NewPlayer {
+export interface Player extends AddPlayer, UnitFactory {}
+
+interface AddPlayer {
   name: string;
   local: boolean;
+  npc?: boolean;
 }
 
-interface Player extends NewPlayer {
-  unit$: Observable<Unit>;
-  addUnit: AddUnit;
+interface PlayerFactory {
+  player$: Observable<Player>,
+  addPlayer: (newPlayer: AddPlayer) => void
 }
 
-function playerFactory (destruction$: Observable<any>): [Observable<Player>, (newPlayer: NewPlayer) => void] {
+function playerFactory (destruction$: Observable<any>): PlayerFactory {
   const player$ = new Subject<Player>()
-
-  return [player$.asObservable().pipe(shareReplay()), (newPlayer) => {
-    const [unit$, addUnit] = unitFactory(EMPTY)
+  const addPlayer$ = new Subject<AddPlayer>()
+  
+  addPlayer$
+  .pipe(
+    takeUntil(destruction$)
+  )
+  .subscribe((newPlayer) => {
+    const unit = unitFactory(destruction$)
 
     const player: Player = {
-      name: newPlayer.name,
-      local: newPlayer.local,
-      unit$,
-      addUnit
+      ...unit,
+      ...newPlayer
     }
     player$.next(player)
-  }]
+  })
+
+  return {
+    player$: player$.asObservable().pipe(shareReplay()),
+    addPlayer: i => addPlayer$.next(i)
+  }
 }
 
-export const [player$, newPlayer] = playerFactory(EMPTY)
+export const { player$, addPlayer } = playerFactory(EMPTY)
+
+export const npcPlayer$ = player$
+.pipe(
+  filter(player => !!player.local && !!player.npc),
+)
+
+export const localPlayer$ = player$
+.pipe(
+  filter(player => !!player.local && !player.npc),
+)
+
+export const remotePlayer$ = player$
+.pipe(
+  filter(player => !player.local && !!player.npc),
+)

@@ -1,6 +1,32 @@
 import * as BABYLON from 'babylonjs';
+import { EMPTY, Observable, Subject, takeUntil } from 'rxjs';
+import { viewport$ } from '../../observables/viewport';
 
-export function createScene (canvas: HTMLCanvasElement): { engine: BABYLON.Engine, scene: BABYLON.Scene } {
+export const [scene$, mountScene] = sceneFactory(EMPTY)
+
+// Must be mounted to be useful
+function sceneFactory (destruction$: Observable<any>): [Observable<BABYLON.Scene>, (canvas: HTMLCanvasElement) => void] {
+  const scene$ = new Subject<BABYLON.Scene>()
+
+  return [
+    scene$.asObservable(),
+    (canvas: HTMLCanvasElement) => {
+      const { engine, scene } = createScene(canvas)
+
+      scene$.next(scene)
+
+      engine.runRenderLoop(function () {
+        scene.render();
+      });
+
+      viewport$.pipe(
+        takeUntil(destruction$)
+      ).subscribe(() => engine.resize())
+    }
+  ]
+}
+
+function createScene (canvas: HTMLCanvasElement): { engine: BABYLON.Engine, scene: BABYLON.Scene } {
   var engine = new BABYLON.Engine(canvas, true, { preserveDrawingBuffer: true, stencil: true });
 
   // CreateScene function that creates and return the scene
