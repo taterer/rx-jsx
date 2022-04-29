@@ -8,10 +8,10 @@ export function createScene (canvas: HTMLCanvasElement): { engine: BABYLON.Engin
   var scene = new BABYLON.Scene(engine);
 
   // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
-  var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 11, -15), scene);
+  var camera = new BABYLON.FreeCamera('camera1', new BABYLON.Vector3(0, 12, -12), scene);
 
   // Target the camera to scene origin
-  camera.setTarget(BABYLON.Vector3.Zero());
+  camera.setTarget(new BABYLON.Vector3(0, 0, -2));
 
   // Attach the camera to the canvas
   // camera.attachControl(canvas, false);
@@ -26,7 +26,8 @@ export function createScene (canvas: HTMLCanvasElement): { engine: BABYLON.Engin
   // sphere.position.y = 1;
   
   // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
-  var ground = BABYLON.Mesh.CreateGround('ground1', 8, 8, 2, scene, false);
+  // var ground = BABYLON.Mesh.CreateGround('ground1', 8, 8, 2, scene, false);
+  BABYLON.MeshBuilder.CreateGround('ground1', { width: 8, height: 12, subdivisions: 2 })
 
   // Return the created scene
   return { engine, scene };

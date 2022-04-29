@@ -1,3 +1,4 @@
+import { css } from "@emotion/css"
 import { takeUntil } from "rxjs"
 import Babylon1 from "../../components/Babylon1"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
@@ -22,9 +23,19 @@ export default function Babylon ({ destruction$ }) {
   })
 
   return (
-    <div>
-      <div onClick={() => history.pushState({}, '', '/babylon/1')}>Test 1</div>
-      <div onClick={() => history.pushState({}, '', '/babylon/2')}>Test 2</div>
+    <div class={css`
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+    `}>
+      <div class={css`
+        width: 100%;
+        justify-content: space-around;
+        display: flex;
+      `}>
+        <div class={css`cursor: pointer;`} onClick={() => history.pushState({}, '', '/babylon/1')}>Test 1</div>
+        <div class={css`cursor: pointer;`} onClick={() => history.pushState({}, '', '/babylon/2')}>Test 2</div>
+      </div>
       <div element$={canvas$} />
     </div>
   )

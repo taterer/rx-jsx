@@ -16,6 +16,10 @@ export default function App () {
       <div class={cx('card-panel', css`
         width: 100%;
         max-width: 800px;
+        
+        @media (max-width: 600px) {
+          padding: 10px 0px;
+        }
       `)}>
         <Router destruction$={EMPTY} />
       </div>
