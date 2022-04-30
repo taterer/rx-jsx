@@ -36,7 +36,7 @@ export const pointerDown$ = pointer$
   filter(pointerInfo => pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN)
 )
 
-export const pointerIsDragging$ = pointer$
+export const pointerDrag$ = pointer$
 .pipe(
   filter(pointerInfo => pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN || pointerInfo.type === BABYLON.PointerEventTypes.POINTERUP),
   map(pointerInfo => {

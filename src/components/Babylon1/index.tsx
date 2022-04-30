@@ -1,9 +1,9 @@
 import * as BABYLON from 'babylonjs';
 import { css } from '@emotion/css'
-import { combineLatestWith, filter, map, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs'
+import { combineLatestWith, distinctUntilKeyChanged, filter, map, scan, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs'
 import { toElement$, _withAnimationFrame_ } from '../../jsx'
 import { localPlayer$, player$, addPlayer, npcPlayer$, Player } from '../../observables/player';
-import { pickGroundPosition, pointerDown$, pointerIsDragging$, pointerMove$ } from '../../3d/babylon/pointer';
+import { pickGroundPosition, pointerDown$, pointerDrag$, pointerMove$ } from '../../3d/babylon/pointer';
 import { mountScene, scene$ } from '../../3d/babylon/scene';
 import { assets, assetY, observableFromName } from '../../3d/babylon/assets';
 import { Unit, _closestUnit_ } from '../../observables/unit';
@@ -106,20 +106,26 @@ export default function Babylon1 ({ destruction$ }) {
 
   // monitor([localPlayerUnitArray$, gayaUnitArray$])
 
-  pointerIsDragging$
+  const pointerMoveStartStop$ = pointerMove$
+  .pipe(
+    withLatestFrom(pointerDrag$),
+    distinctUntilKeyChanged(1)
+  )
+  
+  pointerMoveStartStop$
   .pipe(
     takeUntil(destruction$),
-    withLatestFrom(npcPlayer$, scene$, closestUnitAsset$, gayaUnitArray$),
+    withLatestFrom(npcPlayer$, scene$, closestUnit$, closestUnitAsset$, gayaUnitArray$),
   )
-  .subscribe(([dragging, npc, scene, asset, gayaUnits]: [any, Player, any, any, any]) => {
-    if (dragging.isDragging) {
-      npc.addUnit([{ position: dragging.pointerInfo.pickInfo.pickedPoint }, asset, scene])
+  .subscribe(([[_, drag], npc, scene, closestUnit, closestUnitAsset, gayaUnits]: [any, Player, BABYLON.Scene, Unit, File, Unit[]]) => {
+    if (drag.isDragging) {
+      const groundPosition = pickGroundPosition(scene, assetY[closestUnit.fileName])
+      const position = groundPosition || closestUnit.meshes[0].position
+      npc.addUnit([{ position }, closestUnitAsset, scene])
     } else {
       gayaUnits.forEach(unit => npc.removeUnit([unit, scene]))
     }
   })
-
-  
 
   pointerMove$
   .pipe(
@@ -144,7 +150,7 @@ export default function Babylon1 ({ destruction$ }) {
   // pointerUp$
   // .pipe(
   //   takeUntil(destruction$),
-  //   combineLatestWith(pointerIsDragging$),
+  //   combineLatestWith(pointerDrag$),
   //   filter((_, isDragging) => !!isDragging),
   //   combineLatestWith(scene$, pointerPickedMesh$),
   //   tap(console.log)
