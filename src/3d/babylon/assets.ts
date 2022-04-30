@@ -7,7 +7,9 @@ import {
 } from "rxjs";
 import { _withAnimationFrame_ } from "../../jsx";
 
-const aerobatic_plane$ = from(fetch('/models/aerobatic_plane.glb'))
+const BASE_URL = process.env.BASE_URL || ''
+
+const aerobatic_plane$ = from(fetch(`${BASE_URL}/models/aerobatic_plane.glb`))
 .pipe(
   switchMap(response => response.arrayBuffer()),
   map(arrayBuffer => new File([arrayBuffer], "aerobatic_plane.glb")),
@@ -15,7 +17,7 @@ const aerobatic_plane$ = from(fetch('/models/aerobatic_plane.glb'))
   shareReplay<File>(1)
 )
 
-const shark$ = from(fetch('/models/shark.glb'))
+const shark$ = from(fetch(`${BASE_URL}/models/shark.glb`))
 .pipe(
   switchMap(response => response.arrayBuffer()),
   map(arrayBuffer => new File([arrayBuffer], "shark.glb")),

@@ -3,6 +3,8 @@ import { firstPathChange$ } from '../../observables/location'
 import { toElement$ } from '../../jsx'
 import { RouteRegExp } from '../../utils/route';
 
+const BASE_URL = process.env.BASE_URL || ''
+
 export default function NavbarItem ({ destruction$, title, path }) {
   const [navbarItem$] = toElement$(destruction$)
 
@@ -26,7 +28,7 @@ export default function NavbarItem ({ destruction$, title, path }) {
 
   return (
     <li element$={navbarItem$}>
-      <a class='waves-effect waves-light' onClick={() => history.pushState({}, '', `/${path}`)}>{title}</a>
+      <a class='waves-effect waves-light' onClick={() => history.pushState({}, '', `${BASE_URL}/${path}`)}>{title}</a>
     </li>
   )
 }

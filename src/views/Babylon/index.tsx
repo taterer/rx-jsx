@@ -4,6 +4,8 @@ import Babylon1 from "../../components/Babylon1"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
 import { secondPathChange$ } from "../../observables/location"
 
+const BASE_URL = process.env.BASE_URL || ''
+
 export default function Babylon ({ destruction$ }) {
   const [canvas$, setCanvas] = toElement$(destruction$)
 
@@ -33,8 +35,8 @@ export default function Babylon ({ destruction$ }) {
         justify-content: space-around;
         display: flex;
       `}>
-        <div class={css`cursor: pointer;`} onClick={() => history.pushState({}, '', '/babylon/1')}>Test 1</div>
-        <div class={css`cursor: pointer;`} onClick={() => history.pushState({}, '', '/babylon/2')}>Test 2</div>
+        <div class={css`cursor: pointer;`} onClick={() => history.pushState({}, '', `${BASE_URL}/babylon/1`)}>Test 1</div>
+        <div class={css`cursor: pointer;`} onClick={() => history.pushState({}, '', `${BASE_URL}/babylon/2`)}>Test 2</div>
       </div>
       <div element$={canvas$} />
     </div>

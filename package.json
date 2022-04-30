@@ -4,8 +4,8 @@
   "description": "",
   "scripts": {
     "analyze": "parcel build src/index.html --reporter @parcel/reporter-bundle-analyzer",
-    "build": "parcel build src/index.html",
-    "deploy": "yarn build && gh-pages -d dist",
+    "build": "parcel build src/index.html --public-url ./",
+    "deploy": "NODE_ENV=gh yarn build && gh-pages -d dist",
     "start:server": "ts-node src/server",
     "start": "parcel src/index.html"
   },

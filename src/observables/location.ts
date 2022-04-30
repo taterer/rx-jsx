@@ -1,9 +1,11 @@
 import { fromEvent, Observable } from 'rxjs'
 import { mergeWith, shareReplay, map, distinctUntilChanged, share } from 'rxjs/operators'
 
+const BASE_URL = process.env.BASE_URL || ''
+
 export const pathname$ = createPathnameStream()
 
-export const _mapToFirstPath_ = map((pathname: string) => pathname.replace(/^\/*([^/]*).*/g, '$1'))
+export const _mapToFirstPath_ = map((pathname: string) => pathname.replace(BASE_URL, '').replace(/^\/*([^/]*).*/g, '$1'))
 
 export const firstPathChange$ = pathname$
 .pipe(
@@ -12,7 +14,7 @@ export const firstPathChange$ = pathname$
   share()
 )
 
-export const _mapToSecondPath_ = map((pathname: string) => pathname.replace(/^\/*[^/]*\/*/g, ''))
+export const _mapToSecondPath_ = map((pathname: string) => pathname.replace(BASE_URL, '').replace(/^\/*[^/]*\/*/g, ''))
 
 export const secondPathChange$ = pathname$
 .pipe(
