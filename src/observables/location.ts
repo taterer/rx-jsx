@@ -12,6 +12,15 @@ export const firstPathChange$ = pathname$
   share()
 )
 
+export const _mapToSecondPath_ = map((pathname: string) => pathname.replace(/^\/*[^/]*\/*/g, ''))
+
+export const secondPathChange$ = pathname$
+.pipe(
+  _mapToSecondPath_,
+  distinctUntilChanged(),
+  share()
+)
+
 export function createPathnameStream () {
   const load$ = fromEvent(window, 'load')
   const popstate$ = fromEvent(window, 'popstate')
