@@ -1,12 +1,20 @@
 import * as BABYLON from 'babylonjs';
 import { css } from '@emotion/css'
-import { combineLatestWith, distinctUntilKeyChanged, filter, map, scan, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs'
+import {
+  combineLatestWith,
+  distinctUntilKeyChanged,
+  filter,
+  map,
+  switchMap,
+  takeUntil,
+  withLatestFrom
+} from 'rxjs'
 import { toElement$, _withAnimationFrame_ } from '../../jsx'
-import { localPlayer$, player$, addPlayer, npcPlayer$, Player } from '../../observables/player';
+import { localPlayer$, player$, addPlayer, npcPlayer$, Player } from '../../3d/babylon/player';
 import { pickGroundPosition, pointerDown$, pointerDrag$, pointerMove$ } from '../../3d/babylon/pointer';
 import { mountScene, scene$ } from '../../3d/babylon/scene';
 import { assets, assetY, observableFromName } from '../../3d/babylon/assets';
-import { Unit, _closestUnit_ } from '../../observables/unit';
+import { Unit, _closestUnit_ } from '../../3d/babylon/unit';
 
 export default function Babylon1 ({ destruction$ }) {
   const [canvas$] = toElement$(destruction$)

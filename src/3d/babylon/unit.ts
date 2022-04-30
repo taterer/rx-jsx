@@ -1,6 +1,14 @@
 import * as BABYLON from 'babylonjs';
-import { combineLatestWith, map, Observable, scan, startWith, Subject, takeUntil, tap } from "rxjs";
-import { assetScaling, shortFileName } from '../3d/babylon/assets';
+import {
+  combineLatestWith,
+  map,
+  Observable,
+  scan,
+  startWith,
+  Subject,
+  takeUntil
+} from "rxjs";
+import { assetScaling, shortFileName } from './assets';
 
 export interface Unit {
   fileName: string

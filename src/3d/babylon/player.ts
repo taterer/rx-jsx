@@ -1,4 +1,11 @@
-import { EMPTY, filter, Observable, shareReplay, Subject, switchMap, takeUntil } from "rxjs";
+import {
+  EMPTY,
+  filter,
+  Observable,
+  shareReplay,
+  Subject,
+  takeUntil
+} from "rxjs";
 import { UnitFactory, unitFactory } from "./unit";
 
 export interface Player extends AddPlayer, UnitFactory {}
