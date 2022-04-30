@@ -3,11 +3,10 @@ import { css } from '@emotion/css'
 import { combineLatestWith, filter, map, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs'
 import { toElement$, _withAnimationFrame_ } from '../../jsx'
 import { localPlayer$, player$, addPlayer, npcPlayer$, Player } from '../../observables/player';
-import { pointerDown$, pointerIsDragging$ } from '../../3d/babylon/pointer';
+import { pickGroundPosition, pointerDown$, pointerIsDragging$, pointerMove$ } from '../../3d/babylon/pointer';
 import { mountScene, scene$ } from '../../3d/babylon/scene';
-import { assets, observableFromName } from '../../3d/babylon/assets';
+import { assets, assetY, observableFromName } from '../../3d/babylon/assets';
 import { Unit, _closestUnit_ } from '../../observables/unit';
-import { monitor } from '../../observables/monitor';
 
 export default function Babylon1 ({ destruction$ }) {
   const [canvas$] = toElement$(destruction$)
@@ -31,7 +30,7 @@ export default function Babylon1 ({ destruction$ }) {
     combineLatestWith(scene$, assets.aerobatic_plane$),
   )
   .subscribe(async ([player, scene, plane]) => {
-    player.addUnit([{ position: new BABYLON.Vector3(2, 2, 0) }, plane, scene])
+    player.addUnit([{ position: new BABYLON.Vector3(2, assetY.aerobatic_plane, 0) }, plane, scene])
   })
 
   localPlayer$
@@ -40,7 +39,7 @@ export default function Babylon1 ({ destruction$ }) {
     combineLatestWith(scene$, assets.shark$),
   )
   .subscribe(([player, scene, shark]) => {
-    player.addUnit([{ position: new BABYLON.Vector3(-2, 0, 0) }, shark, scene])
+    player.addUnit([{ position: new BABYLON.Vector3(-2, assetY.shark, 0) }, shark, scene])
   })
 
   // localPlayerUnitArray$
@@ -70,17 +69,32 @@ export default function Babylon1 ({ destruction$ }) {
     switchMap(player => player.unitArray$),
   )
 
+  const gayaUnit$ = npcPlayer$
+  .pipe(
+    takeUntil(destruction$),
+    switchMap(player => player.unit$),
+  )
+
+  gayaUnit$
+  .pipe(
+    withLatestFrom(scene$)
+  )
+  .subscribe(([unit, scene]) => {
+    var myMaterial = new BABYLON.StandardMaterial("Mat", scene);
+    myMaterial.diffuseColor = new BABYLON.Color3(.8, .8, .8)
+    unit.meshes[1].material = myMaterial
+  })
+
   const gayaUnitArray$ = npcPlayer$
   .pipe(
     switchMap(player => player.unitArray$),
-    tap(console.log)
   )
 
   const closestUnit$ = pointerDown$
   .pipe(
     takeUntil(destruction$),
     combineLatestWith(localPlayerUnitArray$),
-    _closestUnit_,
+    _closestUnit_(),
     map(i => i.unit as Unit)
   )
 
@@ -90,19 +104,35 @@ export default function Babylon1 ({ destruction$ }) {
     switchMap<any, [File]>(closestUnit => observableFromName(closestUnit.fileName))
   )
 
-  monitor([localPlayerUnitArray$, gayaUnitArray$])
+  // monitor([localPlayerUnitArray$, gayaUnitArray$])
 
   pointerIsDragging$
   .pipe(
     takeUntil(destruction$),
     withLatestFrom(npcPlayer$, scene$, closestUnitAsset$, gayaUnitArray$),
   )
-  .subscribe(([dragging, player, scene, asset, gayaUnits]: [any, Player, any, any, any]) => {
+  .subscribe(([dragging, npc, scene, asset, gayaUnits]: [any, Player, any, any, any]) => {
     if (dragging.isDragging) {
-      player.addUnit([{ position: dragging.pointerInfo.pickInfo.pickedPoint }, asset, scene])
+      npc.addUnit([{ position: dragging.pointerInfo.pickInfo.pickedPoint }, asset, scene])
     } else {
-      gayaUnits.forEach(unit => player.removeUnit([unit, scene]))
+      gayaUnits.forEach(unit => npc.removeUnit([unit, scene]))
     }
+  })
+
+  
+
+  pointerMove$
+  .pipe(
+    takeUntil(destruction$),
+    withLatestFrom(scene$, gayaUnitArray$)
+  )
+  .subscribe(([_, scene, gayaUnits]) => {
+    gayaUnits.forEach(unit => {
+      const groundPosition = pickGroundPosition(scene, assetY[unit.fileName])
+      if (groundPosition) {
+        unit.meshes[0].position = groundPosition
+      }
+    })
   })
 
   addPlayer({ name: 'Gaya', local: true, npc: true })

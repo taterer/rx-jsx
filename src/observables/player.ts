@@ -23,7 +23,7 @@ function playerFactory (destruction$: Observable<any>): PlayerFactory {
     takeUntil(destruction$)
   )
   .subscribe((newPlayer) => {
-    const unit = unitFactory(destruction$)
+    const unit = unitFactory(destruction$, newPlayer.name)
 
     const player: Player = {
       ...unit,

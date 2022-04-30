@@ -40,3 +40,8 @@ export const assetScaling = {
   aerobatic_plane: new BABYLON.Vector3(5, 5, 5),
   shark: new BABYLON.Vector3(.1, .1, .1),
 }
+
+export const assetY = {
+  aerobatic_plane: 1,
+  shark: 0,
+}

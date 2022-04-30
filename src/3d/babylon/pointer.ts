@@ -54,3 +54,13 @@ export const pointerPick$ = pointer$
 .pipe(
   filter(pointerInfo => pointerInfo.type === BABYLON.PointerEventTypes.POINTERPICK)
 )
+
+export function pickGroundPosition (scene: BABYLON.Scene, y: number = 0): BABYLON.Vector3 | undefined {
+  var pickResult = scene.pick(scene.pointerX, scene.pointerY, function (mesh) {
+    return mesh.name == "ground1";
+  });
+  if (!pickResult.pickedPoint) {
+    return
+  }
+  return new BABYLON.Vector3(pickResult.pickedPoint._x, y, pickResult.pickedPoint._z);
+}
