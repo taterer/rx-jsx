@@ -1,5 +1,5 @@
 {
-  "name": "rx-jsx",
+  "name": "@taterer/rx-jsx",
   "version": "1.0.0",
   "description": "Reactive Extensions with JSX (UI without React)",
   "scripts": {
