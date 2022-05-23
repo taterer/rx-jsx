@@ -920,14 +920,14 @@ M.anime = function() {
                 return "rgba(" + t + "," + i6 + "," + e9 + ",1)";
             }(i5) : B.hsl(i5) ? function(t34) {
                 function e10(t, e, i) {
-                    return i < 0 && (i += 1), 1 < i && --i, i < 1 / 6 ? t + 6 * (e - t) * i : i < 0.5 ? e : i < 2 / 3 ? t + (e - t) * (2 / 3 - i) * 6 : t;
+                    return i < 0 && (i += 1), 1 < i && --i, i < 1 / 6 ? t + 6 * (e - t) * i : i < .5 ? e : i < 2 / 3 ? t + (e - t) * (2 / 3 - i) * 6 : t;
                 }
                 var i7 = /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/g.exec(t34) || /hsla\((\d+),\s*([\d.]+)%,\s*([\d.]+)%,\s*([\d.]+)\)/g.exec(t34);
                 t34 = parseInt(i7[1]) / 360;
                 var n = parseInt(i7[2]) / 100, s = parseInt(i7[3]) / 100, i7 = i7[4] || 1;
                 if (0 == n) s = n = t34 = s;
                 else {
-                    var o = s < 0.5 ? s * (1 + n) : s + n - s * n, a = 2 * s - o, s = e10(a, o, t34 + 1 / 3), n = e10(a, o, t34);
+                    var o = s < .5 ? s * (1 + n) : s + n - s * n, a = 2 * s - o, s = e10(a, o, t34 + 1 / 3), n = e10(a, o, t34);
                     t34 = e10(a, o, t34 - 1 / 3);
                 }
                 return "rgba(" + 255 * s + "," + 255 * n + "," + 255 * t34 + "," + i7 + ")";
@@ -977,7 +977,7 @@ M.anime = function() {
             }(t37, a)).value, i8 = v1(a.target, o.name), n7 = r ? r.to.original : i8, n7 = B.arr(e12) ? e12[0] : n7, s4 = f1(B.arr(e12) ? e12[1] : e12, n7), i8 = l2(s4) || l2(n7) || l2(i8);
             return t37.from = _1(n7, i8), t37.to = _1(s4, i8), t37.start = r ? r.end : o.offset, t37.end = t37.start + t37.delay + t37.duration, t37.easing = function(t) {
                 return B.arr(t) ? D.apply(this, t) : S[t];
-            }(t37.easing), t37.elasticity = (1000 - Math.min(Math.max(t37.elasticity, 1), 999)) / 1000, t37.isPath = B.pth(e12), t37.isColor = B.col(t37.from.original), t37.isColor && (t37.round = 1), r = t37;
+            }(t37.easing), t37.elasticity = (1e3 - Math.min(Math.max(t37.elasticity, 1), 999)) / 1e3, t37.isPath = B.pth(e12), t37.isColor = B.col(t37.from.original), t37.isColor && (t37.round = 1), r = t37;
         });
     }
     function M(e, t39, i, n) {
@@ -1096,7 +1096,7 @@ M.anime = function() {
         autoplay: !0,
         offset: 0
     }, T = {
-        duration: 1000,
+        duration: 1e3,
         delay: 0,
         easing: "easeOutElastic",
         elasticity: 500,
@@ -1145,19 +1145,19 @@ M.anime = function() {
         return function(a, r, l, h) {
             if (0 <= a && a <= 1 && 0 <= l && l <= 1) {
                 var d = new Float32Array(11);
-                if (a !== r || l !== h) for(var t43 = 0; t43 < 11; ++t43)d[t43] = u(0.1 * t43, a, l);
+                if (a !== r || l !== h) for(var t43 = 0; t43 < 11; ++t43)d[t43] = u(.1 * t43, a, l);
                 return function(t) {
                     if (a === r && l === h) return t;
                     if (0 === t) return 0;
                     if (1 === t) return 1;
-                    for(var e = 0, i = 1; 10 !== i && d[i] <= t; ++i)e += 0.1;
-                    var i = e + (t - d[--i]) / (d[i + 1] - d[i]) * 0.1, n = 3 * (1 - 3 * l + 3 * a) * i * i + 2 * (3 * l - 6 * a) * i + 3 * a;
-                    if (0.001 <= n) {
+                    for(var e = 0, i = 1; 10 !== i && d[i] <= t; ++i)e += .1;
+                    var i = e + (t - d[--i]) / (d[i + 1] - d[i]) * .1, n = 3 * (1 - 3 * l + 3 * a) * i * i + 2 * (3 * l - 6 * a) * i + 3 * a;
+                    if (.001 <= n) {
                         for(e = 0; e < 4 && 0 != (n = 3 * (1 - 3 * l + 3 * a) * i * i + 2 * (3 * l - 6 * a) * i + 3 * a); ++e)var s = u(i, a, l) - t, i = i - s / n;
                         t = i;
                     } else if (0 === n) t = i;
                     else {
-                        for(var i = e, e = e + 0.1, o = 0; 0 < (n = u(s = i + (e - i) / 2, a, l) - t) ? e = s : i = s, 0.0000001 < Math.abs(n) && ++o < 10;);
+                        for(var i = e, e = e + .1, o = 0; 0 < (n = u(s = i + (e - i) / 2, a, l) - t) ? e = s : i = s, 1e-7 < Math.abs(n) && ++o < 10;);
                         t = s;
                     }
                     return u(t, r, h);
@@ -1171,102 +1171,102 @@ M.anime = function() {
         var t45, n = "Quad Cubic Quart Quint Sine Expo Circ Back Elastic".split(" "), e15 = {
             In: [
                 [
-                    0.55,
-                    0.085,
-                    0.68,
-                    0.53
+                    .55,
+                    .085,
+                    .68,
+                    .53
                 ],
                 [
-                    0.55,
-                    0.055,
-                    0.675,
-                    0.19
+                    .55,
+                    .055,
+                    .675,
+                    .19
                 ],
                 [
-                    0.895,
-                    0.03,
-                    0.685,
-                    0.22
+                    .895,
+                    .03,
+                    .685,
+                    .22
                 ],
                 [
-                    0.755,
-                    0.05,
-                    0.855,
-                    0.06
+                    .755,
+                    .05,
+                    .855,
+                    .06
                 ],
                 [
-                    0.47,
+                    .47,
                     0,
-                    0.745,
-                    0.715
+                    .745,
+                    .715
                 ],
                 [
-                    0.95,
-                    0.05,
-                    0.795,
-                    0.035
+                    .95,
+                    .05,
+                    .795,
+                    .035
                 ],
                 [
-                    0.6,
-                    0.04,
-                    0.98,
-                    0.335
+                    .6,
+                    .04,
+                    .98,
+                    .335
                 ],
                 [
-                    0.6,
+                    .6,
                     -0.28,
-                    0.735,
-                    0.045
+                    .735,
+                    .045
                 ],
                 i10
             ],
             Out: [
                 [
-                    0.25,
-                    0.46,
-                    0.45,
-                    0.94
+                    .25,
+                    .46,
+                    .45,
+                    .94
                 ],
                 [
-                    0.215,
-                    0.61,
-                    0.355,
+                    .215,
+                    .61,
+                    .355,
                     1
                 ],
                 [
-                    0.165,
-                    0.84,
-                    0.44,
+                    .165,
+                    .84,
+                    .44,
                     1
                 ],
                 [
-                    0.23,
+                    .23,
                     1,
-                    0.32,
+                    .32,
                     1
                 ],
                 [
-                    0.39,
-                    0.575,
-                    0.565,
+                    .39,
+                    .575,
+                    .565,
                     1
                 ],
                 [
-                    0.19,
+                    .19,
                     1,
-                    0.22,
+                    .22,
                     1
                 ],
                 [
-                    0.075,
-                    0.82,
-                    0.165,
+                    .075,
+                    .82,
+                    .165,
                     1
                 ],
                 [
-                    0.175,
-                    0.885,
-                    0.32,
+                    .175,
+                    .885,
+                    .32,
                     1.275
                 ],
                 function(t, e) {
@@ -1275,34 +1275,34 @@ M.anime = function() {
             ],
             InOut: [
                 [
-                    0.455,
-                    0.03,
-                    0.515,
-                    0.955
+                    .455,
+                    .03,
+                    .515,
+                    .955
                 ],
                 [
-                    0.645,
-                    0.045,
-                    0.355,
+                    .645,
+                    .045,
+                    .355,
                     1
                 ],
                 [
-                    0.77,
+                    .77,
                     0,
-                    0.175,
+                    .175,
                     1
                 ],
                 [
-                    0.86,
+                    .86,
                     0,
-                    0.07,
+                    .07,
                     1
                 ],
                 [
-                    0.445,
-                    0.05,
-                    0.55,
-                    0.95
+                    .445,
+                    .05,
+                    .55,
+                    .95
                 ],
                 [
                     1,
@@ -1311,23 +1311,23 @@ M.anime = function() {
                     1
                 ],
                 [
-                    0.785,
-                    0.135,
-                    0.15,
-                    0.86
+                    .785,
+                    .135,
+                    .15,
+                    .86
                 ],
                 [
-                    0.68,
+                    .68,
                     -0.55,
-                    0.265,
+                    .265,
                     1.55
                 ],
                 function(t, e) {
-                    return t < 0.5 ? i10(2 * t, e) / 2 : 1 - i10(-2 * t + 2, e) / 2;
+                    return t < .5 ? i10(2 * t, e) / 2 : 1 - i10(-2 * t + 2, e) / 2;
                 }
             ]
         }, s = {
-            linear: D(0.25, 0.25, 0.75, 0.75)
+            linear: D(.25, .25, .75, .75)
         }, o = {};
         for(t45 in e15)o.type = t45, e15[o.type].forEach(function(i) {
             return function(t, e) {
@@ -1699,7 +1699,7 @@ M.anime = function() {
                         })[0];
                         l && (this.focusedIndex = h2(l).index(), this._focusFocusedItem());
                     }
-                    this.filterTimeout = setTimeout(this._resetFilterQueryBound, 1000);
+                    this.filterTimeout = setTimeout(this._resetFilterQueryBound, 1e3);
                 }
             },
             {
@@ -1775,11 +1775,11 @@ M.anime = function() {
                             easing: "easeOutQuad"
                         },
                         scaleX: [
-                            0.3,
+                            .3,
                             1
                         ],
                         scaleY: [
-                            0.3,
+                            .3,
                             1
                         ],
                         duration: this.options.inDuration,
@@ -1800,8 +1800,8 @@ M.anime = function() {
                             value: 0,
                             easing: "easeOutQuint"
                         },
-                        scaleX: 0.3,
-                        scaleY: 0.3,
+                        scaleX: .3,
+                        scaleY: .3,
                         duration: this.options.outDuration,
                         easing: "easeOutQuint",
                         complete: function(t) {
@@ -1868,7 +1868,7 @@ M.anime = function() {
 }(cash, M.anime), function(s, i12) {
     "use strict";
     var e19 = {
-        opacity: 0.5,
+        opacity: .5,
         inDuration: 250,
         outDuration: 250,
         onOpenStart: null,
@@ -1972,11 +1972,11 @@ M.anime = function() {
                         ],
                         opacity: 1,
                         scaleX: [
-                            0.8,
+                            .8,
                             1
                         ],
                         scaleY: [
-                            0.8,
+                            .8,
                             1
                         ]
                     }), i12(e);
@@ -2009,15 +2009,15 @@ M.anime = function() {
                             this.options.startingTop
                         ],
                         opacity: 0,
-                        scaleX: 0.8,
-                        scaleY: 0.8
+                        scaleX: .8,
+                        scaleY: .8
                     }), i12(e);
                 }
             },
             {
                 key: "open",
                 value: function(t) {
-                    if (!this.isOpen) return this.isOpen = !0, n10._modalsOpen++, this._nthModalOpened = n10._modalsOpen, this.$overlay[0].style.zIndex = 1000 + 2 * n10._modalsOpen, this.el.style.zIndex = 1000 + 2 * n10._modalsOpen + 1, this._openingTrigger = t ? t[0] : void 0, "function" == typeof this.options.onOpenStart && this.options.onOpenStart.call(this, this.el, this._openingTrigger), this.options.preventScrolling && (document.body.style.overflow = "hidden"), this.el.classList.add("open"), this.el.insertAdjacentElement("afterend", this.$overlay[0]), this.options.dismissible && (this._handleKeydownBound = this._handleKeydown.bind(this), this._handleFocusBound = this._handleFocus.bind(this), document.addEventListener("keydown", this._handleKeydownBound), document.addEventListener("focus", this._handleFocusBound, !0)), i12.remove(this.el), i12.remove(this.$overlay[0]), this._animateIn(), this.el.focus(), this;
+                    if (!this.isOpen) return this.isOpen = !0, n10._modalsOpen++, this._nthModalOpened = n10._modalsOpen, this.$overlay[0].style.zIndex = 1e3 + 2 * n10._modalsOpen, this.el.style.zIndex = 1e3 + 2 * n10._modalsOpen + 1, this._openingTrigger = t ? t[0] : void 0, "function" == typeof this.options.onOpenStart && this.options.onOpenStart.call(this, this.el, this._openingTrigger), this.options.preventScrolling && (document.body.style.overflow = "hidden"), this.el.classList.add("open"), this.el.insertAdjacentElement("afterend", this.$overlay[0]), this.options.dismissible && (this._handleKeydownBound = this._handleKeydown.bind(this), this._handleFocusBound = this._handleFocus.bind(this), document.addEventListener("keydown", this._handleKeydownBound), document.addEventListener("focus", this._handleFocusBound, !0)), i12.remove(this.el), i12.remove(this.$overlay[0]), this._animateIn(), this.el.focus(), this;
                 }
             },
             {
@@ -2182,7 +2182,7 @@ M.anime = function() {
                         left: 0
                     }), this._makeAncestorsOverflowVisible(), this.$el.css({
                         position: "absolute",
-                        "z-index": 1000,
+                        "z-index": 1e3,
                         "will-change": "left, top, width, height"
                     }), this.attrWidth = this.$el.attr("width"), this.attrHeight = this.$el.attr("height"), this.attrWidth && (this.$el.css("width", this.attrWidth + "px"), this.$el.removeAttr("width")), this.attrHeight && (this.$el.css("width", this.attrHeight + "px"), this.$el.removeAttr("height")), this.$overlay = o('<div id="materialbox-overlay"></div>').css({
                         opacity: 0
@@ -2209,7 +2209,7 @@ M.anime = function() {
                         easing: "easeOutQuad"
                     }));
                     var i = 0, n = this.originalWidth / this.windowWidth, s = this.originalHeight / this.windowHeight;
-                    this.newWidth = 0, this.newHeight = 0, s < n ? (i = this.originalHeight / this.originalWidth, this.newWidth = 0.9 * this.windowWidth, this.newHeight = 0.9 * this.windowWidth * i) : (i = this.originalWidth / this.originalHeight, this.newWidth = 0.9 * this.windowHeight * i, this.newHeight = 0.9 * this.windowHeight), this._animateImageIn(), this._handleWindowScrollBound = this._handleWindowScroll.bind(this), this._handleWindowResizeBound = this._handleWindowResize.bind(this), this._handleWindowEscapeBound = this._handleWindowEscape.bind(this), window.addEventListener("scroll", this._handleWindowScrollBound), window.addEventListener("resize", this._handleWindowResizeBound), window.addEventListener("keyup", this._handleWindowEscapeBound);
+                    this.newWidth = 0, this.newHeight = 0, s < n ? (i = this.originalHeight / this.originalWidth, this.newWidth = .9 * this.windowWidth, this.newHeight = .9 * this.windowWidth * i) : (i = this.originalWidth / this.originalHeight, this.newWidth = .9 * this.windowHeight * i, this.newHeight = .9 * this.windowHeight), this._animateImageIn(), this._handleWindowScrollBound = this._handleWindowScroll.bind(this), this._handleWindowResizeBound = this._handleWindowResize.bind(this), this._handleWindowEscapeBound = this._handleWindowEscape.bind(this), window.addEventListener("scroll", this._handleWindowScrollBound), window.addEventListener("resize", this._handleWindowResizeBound), window.addEventListener("keyup", this._handleWindowEscapeBound);
                 }
             },
             {
@@ -2838,12 +2838,12 @@ M.anime = function() {
     "use strict";
     var t69 = {
         html: "",
-        displayLength: 4000,
+        displayLength: 4e3,
         inDuration: 300,
         outDuration: 375,
         classes: "",
         completeCallback: null,
-        activationPercent: 0.8
+        activationPercent: .8
     }, e27 = function() {
         function s(t) {
             _classCallCheck(this, s), this.options = i15.extend({}, s.defaults, t), this.message = this.options.html, this.panning = !1, this.timeRemaining = this.options.displayLength, 0 === s._toasts.length && s._createContainer(), s._toasts.push(this);
@@ -3057,7 +3057,7 @@ M.anime = function() {
             {
                 key: "_handleDragTargetRelease",
                 value: function() {
-                    this.isDragged && (0.2 < this.percentOpen ? this.open() : this._animateOut(), this.isDragged = !1, this._verticallyScrolling = !1);
+                    this.isDragged && (.2 < this.percentOpen ? this.open() : this._animateOut(), this.isDragged = !1, this._verticallyScrolling = !1);
                 }
             },
             {
@@ -3076,7 +3076,7 @@ M.anime = function() {
             {
                 key: "_handleCloseRelease",
                 value: function() {
-                    this.isOpen && this.isDragged && (0.8 < this.percentOpen ? this._animateIn() : this.close(), this.isDragged = !1, this._verticallyScrolling = !1);
+                    this.isOpen && this.isDragged && (.8 < this.percentOpen ? this._animateIn() : this.close(), this.isDragged = !1, this._verticallyScrolling = !1);
                 }
             },
             {
@@ -3636,7 +3636,7 @@ M.anime = function() {
         indicators: !0,
         height: 400,
         duration: 500,
-        interval: 6000
+        interval: 6e3
     }, t78 = function(t79) {
         function n19(t80, e33) {
             _classCallCheck(this, n19);
@@ -4229,7 +4229,7 @@ M.anime = function() {
                             targets: t,
                             opacity: 1,
                             scale: [
-                                0.4,
+                                .4,
                                 1
                             ],
                             translateY: [
@@ -4255,7 +4255,7 @@ M.anime = function() {
                         s10.remove(t), s10({
                             targets: t,
                             opacity: 0,
-                            scale: 0.4,
+                            scale: .4,
                             translateY: e.offsetY,
                             translateX: e.offsetX,
                             duration: 175,
@@ -5409,7 +5409,7 @@ M.anime = function() {
             {
                 key: "_handleCarouselRelease",
                 value: function(t) {
-                    if (this.pressed) return this.pressed = !1, clearInterval(this.ticker), this.target = this.offset, (10 < this.velocity || this.velocity < -10) && (this.amplitude = 0.9 * this.velocity, this.target = this.offset + this.amplitude), this.target = Math.round(this.target / this.dim) * this.dim, this.noWrap && (this.target >= this.dim * (this.count - 1) ? this.target = this.dim * (this.count - 1) : this.target < 0 && (this.target = 0)), this.amplitude = this.target - this.offset, this.timestamp = Date.now(), requestAnimationFrame(this._autoScrollBound), this.dragged && (t.preventDefault(), t.stopPropagation()), !1;
+                    if (this.pressed) return this.pressed = !1, clearInterval(this.ticker), this.target = this.offset, (10 < this.velocity || this.velocity < -10) && (this.amplitude = .9 * this.velocity, this.target = this.offset + this.amplitude), this.target = Math.round(this.target / this.dim) * this.dim, this.noWrap && (this.target >= this.dim * (this.count - 1) ? this.target = this.dim * (this.count - 1) : this.target < 0 && (this.target = 0)), this.amplitude = this.target - this.offset, this.timestamp = Date.now(), requestAnimationFrame(this._autoScrollBound), this.dragged && (t.preventDefault(), t.stopPropagation()), !1;
                 }
             },
             {
@@ -5479,7 +5479,7 @@ M.anime = function() {
                 key: "_track",
                 value: function() {
                     var t, e, i, n;
-                    e = (t = Date.now()) - this.timestamp, this.timestamp = t, i = this.offset - this.frame, this.frame = this.offset, n = 1000 * i / (1 + e), this.velocity = 0.8 * n + 0.2 * this.velocity;
+                    e = (t = Date.now()) - this.timestamp, this.timestamp = t, i = this.offset - this.frame, this.frame = this.offset, n = 1e3 * i / (1 + e), this.velocity = .8 * n + .2 * this.velocity;
                 }
             },
             {
@@ -5663,7 +5663,7 @@ M.anime = function() {
                 value: function() {
                     var t = "fixed" === this.$origin.css("position");
                     if (!t) for(var e = this.$origin.parents(), i = 0; i < e.length && !(t = "fixed" == S(e[i]).css("position")); i++);
-                    var n = this.$origin.outerWidth(), s = this.$origin.outerHeight(), o = t ? this.$origin.offset().top - M.getDocumentScrollTop() : this.$origin.offset().top, a = t ? this.$origin.offset().left - M.getDocumentScrollLeft() : this.$origin.offset().left, r = window.innerWidth, l = window.innerHeight, h = r / 2, d = l / 2, u = a <= h, c = h < a, p = o <= d, v = d < o, f = 0.25 * r <= a && a <= 0.75 * r, m = this.$el.outerWidth(), g = this.$el.outerHeight(), _ = o + s / 2 - g / 2, y = a + n / 2 - m / 2, k = t ? "fixed" : "absolute", b = f ? m : m / 2 + n, w = g / 2, C = p ? g / 2 : 0, E = u && !f ? m / 2 - n : 0, O = n, x = v ? "bottom" : "top", L = 2 * n, T = L, $ = g / 2 - T / 2, B = m / 2 - L / 2, D = {};
+                    var n = this.$origin.outerWidth(), s = this.$origin.outerHeight(), o = t ? this.$origin.offset().top - M.getDocumentScrollTop() : this.$origin.offset().top, a = t ? this.$origin.offset().left - M.getDocumentScrollLeft() : this.$origin.offset().left, r = window.innerWidth, l = window.innerHeight, h = r / 2, d = l / 2, u = a <= h, c = h < a, p = o <= d, v = d < o, f = .25 * r <= a && a <= .75 * r, m = this.$el.outerWidth(), g = this.$el.outerHeight(), _ = o + s / 2 - g / 2, y = a + n / 2 - m / 2, k = t ? "fixed" : "absolute", b = f ? m : m / 2 + n, w = g / 2, C = p ? g / 2 : 0, E = u && !f ? m / 2 - n : 0, O = n, x = v ? "bottom" : "top", L = 2 * n, T = L, $ = g / 2 - T / 2, B = m / 2 - L / 2, D = {};
                     D.top = p ? _ + "px" : "", D.right = c ? r - y - m + "px" : "", D.bottom = v ? l - _ - g + "px" : "", D.left = u ? y + "px" : "", D.position = k, S(this.wrapper).css(D), S(this.contentEl).css({
                         width: b + "px",
                         height: w + "px",
