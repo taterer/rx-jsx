@@ -1,8 +1,10 @@
 import {
   animationFrameScheduler,
   fromEvent,
+  Observable,
   OperatorFunction,
   pluck,
+  startWith,
   Subject,
   switchMap,
   takeUntil,
@@ -72,16 +74,25 @@ export const _withAnimationFrame_: OperatorFunction<any, any> = switchMap(async 
   })
 })
 
-export function fromEventElement$ (target$: Subject<Element>, eventName: string) {
+export function fromEventElement$ (target$: Observable<Element>, eventName: string) {
   return target$
   .pipe(
     switchMap(target => fromEvent(target, eventName))
   )
 }
 
-export function fromValueElementKeyup$ (target$: Subject<Element>) {
+export function fromValueElementKeyup$(target$: Subject<Element>, defaultValue?: string) {
   return target$
   .pipe(
-    switchMap(target => fromEvent(target, 'keyup').pipe(pluck('target', 'value')))
+    switchMap<Element, Observable<string>>(target => fromEvent<any>(target, 'keyup').pipe(pluck('target', 'value'))),
+    startWith(defaultValue || ''),
   )
+}
+
+export function classSync (target: Element, classToSync: string, shouldHaveClass: boolean) {
+  if (shouldHaveClass) {
+    target.classList.add(classToSync)
+  } else {
+    target.classList.remove(classToSync)
+  }
 }

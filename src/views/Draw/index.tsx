@@ -9,31 +9,16 @@ import {
   mergeWith,
   scan,
   share,
+  shareReplay,
   switchMap,
   takeUntil
 } from 'rxjs/operators';
+import { viewport$ } from '../../domain/viewport/query';
+import { mapToPersistable_, withIndexedDB_, concatMapPersist_, Tables, indexedDB$, Persistence } from '../../domain/persistence/repository';
 import { fromEventElement$, toElement$, _withAnimationFrame_ } from '../../jsx';
-import { Persistence, Tables } from '../../utils/repository';
-import { _mapToPersistable_, _withIndexedDB_, _concatMapPersist_, indexedDB$ } from '../../utils/repository';
-import { viewport$ } from '../../observables/viewport';
-import { socketDraw$, subscribeServer, _withSocketConnection_ } from '../../utils/sockets';
-
-function draw (canvasContext, stroke, strokeStyle = '#000000') {
-  if (stroke.begin) {
-    canvasContext.beginPath()
-    canvasContext.moveTo(stroke.x, stroke.y)
-    canvasContext.strokeStyle = strokeStyle
-    canvasContext.lineWidth = 2
-    canvasContext.lineCap = 'round'
-  }
-  if (stroke.stroke) {
-    canvasContext.lineTo(stroke.x, stroke.y)
-    canvasContext.stroke()
-  }
-  if (stroke.close) {
-    canvasContext.closePath()
-  }
-}
+import { panel } from '../../styles';
+import { socketDraw$, subscribeAndPushToChannel } from '../../domain/sync/sockets';
+import { draw } from '../../domain/2d/canvas';
 
 export default function Draw ({ destruction$ }) {
   const [canvas$] = toElement$(destruction$)
@@ -42,7 +27,8 @@ export default function Draw ({ destruction$ }) {
 
   const canvasContext$ = canvas$
   .pipe(
-    map((canvas: any) => canvas.getContext('2d'))
+    map((canvas: any) => canvas.getContext('2d')),
+    shareReplay(1)
   )
   
   const offset$ = viewport$
@@ -83,40 +69,38 @@ export default function Draw ({ destruction$ }) {
     combineLatestWith(canvasContext$),
     takeUntil(destruction$),
   )
-  .subscribe({
-    next: ([stroke, canvasContext]: any) => {
-      draw(canvasContext, stroke)
-    }
+  .subscribe(([stroke, canvasContext]: any) => {
+    draw(canvasContext, stroke)
   })
 
-  stroke$
+  // Begin sync
+
+  subscribeAndPushToChannel(destruction$, 'draw', stroke$
   .pipe(
     filter(stroke => !!stroke.stroke),
-    _withSocketConnection_,
-    takeUntil(destruction$)
-  )
-  .subscribe(subscribeServer('draw'))
+  ))
 
   socketDraw$
   .pipe(
     combineLatestWith(canvasContext$),
     takeUntil(destruction$),
-  ).subscribe({
-    next: ([stroke, canvasContext]: any) => {
-      draw(canvasContext, stroke, '#ff0000')
-    }
+  ).subscribe(([stroke, canvasContext]: any) => {
+    draw(canvasContext, stroke, '#ff0000')
   })
+
+  // End sync
 
   // Begin persistence
 
   stroke$
   .pipe(
     filter(stroke => !!stroke.stroke || stroke.close || stroke.begin),
-    _mapToPersistable_,
-    _withIndexedDB_,
-    _concatMapPersist_(Tables.strokes),
+    mapToPersistable_(),
+    withIndexedDB_(),
+    concatMapPersist_(Tables.strokes),
     takeUntil(destruction$),
-  ).subscribe()
+  )
+  .subscribe()
 
   // redraw
   indexedDB$
@@ -128,40 +112,36 @@ export default function Draw ({ destruction$ }) {
       }
       return a.created_at - b.created_at
     })),
-    takeUntil(destruction$),
     switchMap(strokes => from(strokes)),
     combineLatestWith(canvasContext$),
-    delay(0)
+    delay(0),
+    takeUntil(destruction$),
   )
-  .subscribe({
-    next: ([stroke, canvasContext]) => {
-      draw(canvasContext, stroke)
-    }
+  .subscribe(([stroke, canvasContext]) => {
+    draw(canvasContext, stroke)
   })
 
   fromEventElement$(clear$, 'click')
   .pipe(
+    combineLatestWith(canvas$, canvasContext$, indexedDB$),
     takeUntil(destruction$),
-    combineLatestWith(canvas$, canvasContext$, indexedDB$)
   )
-  .subscribe({
-    next: async ([_, canvas, canvasContext, db]: any) => {
-      setPending(<h1 class={css`
-        position: absolute;
-        margin: 220px;
-      `}>
-        Clearing ...
-      </h1>)
-      canvasContext.clearRect(0, 0, canvas.width, canvas.height)
-      const strokes = await db.query(Tables.strokes)
-      await Promise.all(strokes.map((stroke: any) => db.remove(Tables.strokes, stroke.id)))
-      setPending(<div />)
-    }
+  .subscribe(async ([_, canvas, canvasContext, db]: any) => {
+    setPending(<h1 class={css`
+      position: absolute;
+      margin: 220px;
+    `}>
+      Clearing ...
+    </h1>)
+    canvasContext.clearRect(0, 0, canvas.width, canvas.height)
+    const strokes = await db.query(Tables.strokes)
+    await Promise.all(strokes.map((stroke: any) => db.remove(Tables.strokes, stroke.id)))
+    setPending(<div />)
   })
 
   // End persistence
 
-  return <div>
+  return <div class={panel}>
     <div element$={pending$} />
     <canvas element$={canvas$}
       class={css`

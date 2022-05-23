@@ -1,4 +1,4 @@
-import { Persistence } from "../repositories"
+import { Persistence } from "./repository"
 
 /**
  * @param {string} databaseName

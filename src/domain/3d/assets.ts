@@ -5,9 +5,8 @@ import {
   shareReplay,
   switchMap,
 } from "rxjs";
+import { BASE_URL } from '../../config';
 import { _withAnimationFrame_ } from "../../jsx";
-
-const BASE_URL = process.env.BASE_URL || ''
 
 const aerobatic_plane$ = from(fetch(`${BASE_URL}/models/aerobatic_plane.glb`))
 .pipe(

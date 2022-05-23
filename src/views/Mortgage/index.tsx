@@ -1,6 +1,7 @@
 import { css } from '@emotion/css'
 import { combineLatest, takeUntil } from 'rxjs'
 import { toElement$, fromValueElementKeyup$ } from '../../jsx'
+import { panel } from '../../styles'
 
 const lineItemClass = css`max-width: 400px;`
 
@@ -11,7 +12,7 @@ function toDollar (str: number) {
     .replace(/(\...).*/, '$1')
 }
 
-export default function Calculator ({ destruction$ }) {
+export default function Mortgage ({ destruction$ }) {
   const [principal$] = toElement$(destruction$)
   const [interest$] = toElement$(destruction$)
   const [term$] = toElement$(destruction$)
@@ -40,7 +41,7 @@ export default function Calculator ({ destruction$ }) {
   })
 
   return (
-    <div>
+    <div class={panel}>
       <p>Mortgage Calculator</p>
       <div>
         <div class={lineItemClass}>

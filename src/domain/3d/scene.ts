@@ -1,6 +1,6 @@
 import * as BABYLON from 'babylonjs';
 import { EMPTY, Observable, Subject, takeUntil } from 'rxjs';
-import { viewport$ } from '../../observables/viewport';
+import { viewport$ } from '../viewport/query';
 
 export const [scene$, mountScene] = sceneFactory(EMPTY)
 

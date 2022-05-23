@@ -1,6 +1,8 @@
+import { panel } from "../../styles";
+
 export default function NotFound () {
   return (
-    <div>
+    <div class={panel}>
       Page not found
     </div>
   )
