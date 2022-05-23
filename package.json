@@ -1,6 +1,6 @@
 {
   "name": "@taterer/rx-jsx",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Reactive Extensions with JSX (UI without React)",
   "scripts": {
     "analyze": "parcel build src/index.html --reporter @parcel/reporter-bundle-analyzer",
@@ -10,6 +10,14 @@
     "start": "parcel src/index.html"
   },
   "author": "Taylor McKay",
+  "bugs": {
+    "url": "https://github.com/taterer/rx-jsx/issues"
+  },
+  "homepage": "https://taterer.github.io/rx-jsx/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taterer/rx-jsx.git"
+  },
   "keywords": [
     "rxjs",
     "jsx",
@@ -19,7 +27,7 @@
     "Reactive",
     "Reactive Extensions"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.12.0",
     "@babel/plugin-transform-react-jsx": "^7.17.3",
