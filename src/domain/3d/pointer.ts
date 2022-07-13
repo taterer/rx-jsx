@@ -59,8 +59,8 @@ export function pickGroundPosition (scene: BABYLON.Scene, y: number = 0): BABYLO
   var pickResult = scene.pick(scene.pointerX, scene.pointerY, function (mesh) {
     return mesh.name == "ground1";
   });
-  if (!pickResult.pickedPoint) {
+  if (!pickResult?.pickedPoint) {
     return
   }
-  return new BABYLON.Vector3(pickResult.pickedPoint._x, y, pickResult.pickedPoint._z);
+  return new BABYLON.Vector3(pickResult?.pickedPoint._x, y, pickResult?.pickedPoint._z);
 }

@@ -43,6 +43,6 @@ export const assetScaling = {
 }
 
 export const assetY = {
-  aerobatic_plane: 1,
+  aerobatic_plane: 0,
   shark: 0,
 }
