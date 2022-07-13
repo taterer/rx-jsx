@@ -101,12 +101,12 @@ function _accumulateUnitToArray_ () {
   }, [])
 }
 
-export function _closestUnit_ () {
-  return map(([pointerInfo, unitArray]: [BABYLON.PointerInfo, Unit[]]) => unitArray.reduce(({ distance, unit }, current): any => {
-    const newDistance = BABYLON.Vector3.DistanceSquared(current.meshes[0].position || BABYLON.Vector3.Zero(), pointerInfo.pickInfo.pickedPoint || BABYLON.Vector3.Zero())
+export function getClosestUnit () {
+  return map<any, { distance: number, unit: Unit | undefined, pickedPoint: any }>(([pointerInfo, unitArray]: [BABYLON.PointerInfo, Unit[]]) => unitArray.reduce(({ distance, unit }, current): any => {
+    const newDistance = BABYLON.Vector3.DistanceSquared(current.meshes[0].position || BABYLON.Vector3.Zero(), pointerInfo.pickInfo?.pickedPoint || BABYLON.Vector3.Zero())
     if (newDistance < distance) {
-      return { distance: newDistance, unit: current, pickedPoint: pointerInfo.pickInfo.pickedPoint }
+      return { distance: newDistance, unit: current, pickedPoint: pointerInfo.pickInfo?.pickedPoint }
     }
-    return { distance, unit, pickedPoint: pointerInfo.pickInfo.pickedPoint }
-  }, { distance: Infinity, unit: undefined, pickedPoint: pointerInfo.pickInfo.pickedPoint }))
+    return { distance, unit, pickedPoint: pointerInfo.pickInfo?.pickedPoint }
+  }, { distance: Infinity, unit: undefined, pickedPoint: pointerInfo.pickInfo?.pickedPoint }))
 }

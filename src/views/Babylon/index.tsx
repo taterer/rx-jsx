@@ -13,7 +13,7 @@ import { toElement$, _withAnimationFrame_ } from '../../jsx'
 import { assets, assetY, observableFromName } from '../../domain/3d/assets';
 import { player$, localPlayer$, npcPlayer$, Player, addPlayer } from '../../domain/3d/player';
 import { mountScene, scene$ } from '../../domain/3d/scene';
-import { Unit, _closestUnit_ } from '../../domain/3d/unit';
+import { Unit, getClosestUnit } from '../../domain/3d/unit';
 import { pointerDown$, pointerMove$, pointerDrag$, pickGroundPosition } from '../../domain/3d/pointer';
 
 export default function Babylon ({ destruction$ }) {
@@ -102,7 +102,7 @@ export default function Babylon ({ destruction$ }) {
   .pipe(
     takeUntil(destruction$),
     combineLatestWith(localPlayerUnitArray$),
-    _closestUnit_(),
+    getClosestUnit(),
     map(i => i.unit as Unit)
   )
 
