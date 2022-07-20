@@ -17,12 +17,12 @@ import {
   if (typeof tag === 'function') return tag(props, ...children);
   const element = document.createElement(tag);
 
-  Object.entries(props || {}).forEach(([name, value]) => {
+  Object.entries(props || {}).forEach(([name, value]: [string, any]) => {
     if (name.startsWith('on') && name.toLowerCase() in window) {
       element.addEventListener(name.toLowerCase().substr(2), value);
     }
     else if (name === 'element$') {
-      const observable = value as any
+      const observable = value
       if (observable && observable.next && typeof observable.next === 'function') {
         observable.next(element)
       }
