@@ -7,6 +7,7 @@ export enum Route {
   mortgage = 'mortgage',
   draw = 'draw',
   babylon = 'babylon',
+  training = 'training',
 }
 
 export function subscribeHistoryPushReplace (destruction$) {
@@ -32,4 +33,5 @@ export const RouteRegExp = {
   mortgage: /^mortgage$/,
   draw: /^draw$/,
   babylon: /^babylon$/,
+  training: /^training$/,
 }

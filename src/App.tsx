@@ -13,7 +13,7 @@ export default function App () {
       height: 100%;
       width: 100%;
     `}>
-      <Navbar destruction$={EMPTY} />
+      {/* <Navbar destruction$={EMPTY} /> */}
       <Router destruction$={EMPTY} />
     </div>
   )

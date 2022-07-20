@@ -18,6 +18,7 @@ export default function Navbar ({ destruction$ }) {
               <NavbarItem destruction$={destruction$} path={Route.mortgage} title="Mortgage" />
               <NavbarItem destruction$={destruction$} path={Route.draw} title="Draw" />
               <NavbarItem destruction$={destruction$} path={Route.babylon} title="Babylon" />
+              <NavbarItem destruction$={destruction$} path={Route.training} title="Training" />
               <NavbarItem destruction$={destruction$} path={'asdf'} title="Else" />
             </ul>
         </nav>
