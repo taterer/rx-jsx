@@ -1,12 +1,32 @@
+import { Subject, takeUntil } from "rxjs"
 import { Route } from "../../domain/route"
-import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
+import { Icon } from "../../domain/timeline/command"
 import { toElement$ } from "../../jsx"
+import { tag } from "../../utils/tag"
+import { complete$ } from "../../views/Training"
 
 const title = 'Home'
 const path = `/${Route.training}/0`
 
 export default function Exercise ({ destruction$ }) {
   const [blueButton$] = toElement$(destruction$)
+
+  const red$ = new Subject()
+  const blue$ = new Subject()
+
+  red$
+  .pipe(
+    tag({ name: 'Red', color: 'red', icon: Icon.message }),
+    takeUntil(destruction$),
+  )
+  .subscribe(i => console.log('red', i))
+
+  blue$
+  .pipe(
+    tag({ name: 'Blue', color: 'blue', icon: Icon.message }),
+    takeUntil(destruction$),
+  )
+  .subscribe(i => console.log('blue', i))
 
   return (
     <div>
@@ -25,12 +45,12 @@ export default function Exercise ({ destruction$ }) {
         <br />
         <div
           class='waves-effect waves-light btn red'
-          onclick={() => nextTimelineEvent({ icon: Icon.mouse, color: 'red' })}>
+          onclick={() => red$.next(undefined)}>
           Red
         </div>
         <div element$={blueButton$}
           class='waves-effect waves-light btn blue'
-          onclick={() => nextTimelineEvent({ icon: Icon.mouse, color: 'blue' })}>
+          onclick={() => blue$.next(undefined)}>
           Blue
         </div>
         <br />
@@ -42,7 +62,7 @@ export default function Exercise ({ destruction$ }) {
         <br />
         <div element$={blueButton$}
           class='waves-effect waves-light btn orange'
-          onclick={() => achieveTimeline(undefined)}>
+          onclick={() => complete$.next(undefined)}>
           Star
         </div>
       </div>

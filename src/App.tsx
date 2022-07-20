@@ -1,23 +1,7 @@
 import { css } from '@emotion/css'
-import { EMPTY, Observable } from 'rxjs'
-import { share, map, shareReplay } from 'rxjs/operators'
+import { EMPTY } from 'rxjs'
 // import Navbar from './components/Navbar'
 import Router from './components/Router'
-import { create } from "rxjs-spy";
-
-const spy = create();
-export const spy$ = new Observable<string>(function (subscriber) {
-    spy.log({ log: i => subscriber.next(i) })
-  })
-  .pipe(
-    map(i => {
-      const [line1, line2] = i.split('; ')
-      const [_tag, tag] = line1.split(' = ')
-      const [_notitication, notitication] = line2.split(' = ')
-      return { tag, notitication }
-    }),
-    share()
-  )
 
 export default function App () {
   return (

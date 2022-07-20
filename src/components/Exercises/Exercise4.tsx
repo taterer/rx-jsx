@@ -1,10 +1,10 @@
-import { tag } from "rxjs-spy/operators/tag"
 import { css } from "@emotion/css"
 import { from, interval, Subject, Subscription, timer } from "rxjs"
 import { scan, takeUntil, tap, withLatestFrom, concatMap } from "rxjs/operators"
 import { Route } from "../../domain/route"
 import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
+import { tag } from "../../utils/tag"
 
 const globalSubcription$ = new Subject<{ add: boolean, sub: Subscription }>()
 const globalSubcriptions$ = globalSubcription$
@@ -21,15 +21,6 @@ const globalSubcriptions$ = globalSubcription$
 )
 
 globalSubcriptions$.subscribe()
-
-Subscription.prototype.add = function () {
-  globalSubcription$.next({ add: true, sub: this })
-  return Subscription.prototype.add
-}
-Subscription.prototype.unsubscribe = function () {
-  globalSubcription$.next({ add: false, sub: this })
-  return Subscription.prototype.unsubscribe
-}
 
 const title = '4'
 const path = `/${Route.training}/4`
@@ -113,7 +104,7 @@ export default function Exercise ({ destruction$ }) {
     from([1, 2, 3, 4, 5])
     .pipe(
       concatMap(() => timer(1000)), // slow it down so we can see it separated in the timeline
-      tag('from-1-5'),
+      tag({ name: 'from-1-5' }),
     )
     .subscribe(i => {
       nextTimelineEvent({ icon: Icon.thumb_up, color: 'blue' })
@@ -123,7 +114,7 @@ export default function Exercise ({ destruction$ }) {
   subscription$.next(
     interval$
     .pipe(
-      tag('adhoc-sub'),
+      tag({ name: 'adhoc-sub' }),
       takeUntil(destructionStream$),
       tap(() => nextTimelineEvent({ icon: Icon.message, color: 'green' }))
     )

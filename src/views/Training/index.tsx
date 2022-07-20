@@ -1,5 +1,5 @@
 import { css, cx } from "@emotion/css";
-import { merge, takeUntil, withLatestFrom } from "rxjs";
+import { takeUntil, withLatestFrom } from "rxjs/operators";
 import { Route } from "../../domain/route";
 import { pathname$, pathnameChange$ } from "../../domain/route/query";
 import { toElement$, _withAnimationFrame_ } from "../../jsx";
@@ -10,9 +10,9 @@ import { exercise2  } from "../../components/Exercises/Exercise2";
 import { exercise3  } from "../../components/Exercises/Exercise3";
 import { exercise4  } from "../../components/Exercises/Exercise4";
 import { pushHistory, replaceHistory } from "../../domain/route/command";
-import Timeline from "../../components/Timeline";
 import NavbarItem from "./NavbarItem";
-import { timelineEvents$ } from "../../domain/timeline/query";
+import { Subject } from "rxjs";
+import { tag } from "../../utils/tag";
 
 const exercises = [
   exercise0,
@@ -22,11 +22,12 @@ const exercises = [
   exercise4,
 ]
 
+export const complete$ = new Subject()
+
 export default function Training ({ destruction$ }) {
   const [content$, setContent] = toElement$(destruction$)
   const [back$, setBack] = toElement$(destruction$)
   const [forward$, setForward] = toElement$(destruction$)
-  const [timeline$, setTimeline] = toElement$(destruction$)
 
   pathname$
   .pipe(
@@ -41,12 +42,7 @@ export default function Training ({ destruction$ }) {
     // set content to appropriate exercise
     exercises.some((exercise, index) => {
       if (exercise.path === pathname) {
-        setContent(<exercise.Exercise destruction$={destruction$} />)
-        setTimeline(
-          <div>
-            <Timeline destruction$={merge(destruction$, pathnameChange$)} />
-            <Timeline destruction$={merge(destruction$, pathnameChange$)} scroll={false} /* debug */ />
-          </div>)
+        setContent(<exercise.Exercise destruction$={pathnameChange$} />)
         if (index > 0) {
           setBack(
             <div
@@ -83,15 +79,14 @@ export default function Training ({ destruction$ }) {
     })
   })
 
-  timelineEvents$
+  complete$
   .pipe(
+    tag({ name: 'Complete', color: 'gold', icon: 'star' }),
     withLatestFrom(forward$),
     takeUntil(destruction$)
   )
   .subscribe(([timelineEvent, forward]) => {
-    if (timelineEvent.icon === 'star') {
-      forward.removeAttribute('disabled')
-    }
+    forward.removeAttribute('disabled')
   })
 
   return (
@@ -110,17 +105,6 @@ export default function Training ({ destruction$ }) {
         </nav>
         <div class={panel}>
           <div element$={content$} />
-        </div>
-        <div class={cx(
-          panel,
-          css`
-            overflow: auto;
-          `
-        )}>
-          <div>
-            Timeline (debugging)
-          </div>
-          <div element$={timeline$} />
         </div>
         <div class={css`
           width: 100%;

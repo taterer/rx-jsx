@@ -2,8 +2,9 @@ import { css } from "@emotion/css"
 import { interval, Subject, Subscription } from "rxjs"
 import { scan, takeUntil, withLatestFrom } from "rxjs/operators"
 import { Route } from "../../domain/route"
-import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
 import { toElement$ } from "../../jsx"
+import { tag } from "../../utils/tag"
+import { complete$ } from "../../views/Training"
 
 const title = '2'
 const path = `/${Route.training}/2`
@@ -47,6 +48,8 @@ export default function Exercise ({ destruction$ }) {
         */
         // use the subscription variable here to unsubscribe
         // this.remove() // optionally remove the unsubscribe element
+        subscription.unsubscribe()
+        this.remove()
       }}>
       Unsubscribe
     </div>)
@@ -67,8 +70,9 @@ export default function Exercise ({ destruction$ }) {
     takeUntil(destruction$)
   )
   .subscribe(([_, subscriptions]) => {
+    console.log('subscriptions', subscriptions)
     if (!success && subscriptions.length > 1 && subscriptions.every(i => i.closed)) {
-      achieveTimeline(undefined)
+      complete$.next(undefined)
       success = true
     }
   })
@@ -92,7 +96,12 @@ export default function Exercise ({ destruction$ }) {
       <div
         class='waves-effect waves-light btn green'
         onclick={() => {
-          subscription$.next(interval$.subscribe(i => nextTimelineEvent({ icon: Icon.message, color: 'green' })))
+          subscription$.next(
+            interval$
+            .pipe(
+              tag({ name: 'Subscription', color: 'green' }),
+            )
+            .subscribe())
         }}>
         Subscribe
       </div>

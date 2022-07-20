@@ -1,8 +1,10 @@
-import { interval, Subscription } from "rxjs"
+import { interval, Subject, Subscription } from "rxjs"
 import { share, takeUntil } from "rxjs/operators"
 import { Route } from "../../domain/route"
-import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
+import { Icon } from "../../domain/timeline/command"
 import { toElement$ } from "../../jsx"
+import { tag } from "../../utils/tag"
+import { complete$ } from "../../views/Training"
 
 const title = '1'
 const path = `/${Route.training}/1`
@@ -19,6 +21,7 @@ const animationTiming = {
 
 export default function Exercise ({ destruction$ }) {
   let success
+  const event$ = new Subject()
   const [threeSecond$] = toElement$(destruction$)
   const interval$ = interval(animationTiming.duration)
   const subscriptions: Subscription[] = []
@@ -43,7 +46,7 @@ export default function Exercise ({ destruction$ }) {
   )
   .subscribe(() => {
     if (!success && subscription && subscriptions.length) {
-      achieveTimeline(undefined)
+      complete$.next(undefined)
       success = true
     }
   })
@@ -69,7 +72,10 @@ export default function Exercise ({ destruction$ }) {
         onclick={() => {
           subscriptions.push(
             interval$ // change this to sharedInterval$
-            .subscribe(i => nextTimelineEvent({ icon: Icon.message, color: 'green' }))
+            .pipe(
+              tag({ name: 'Subscription' })
+            )
+            .subscribe(i => event$.next(undefined))
           )
         }}>
         Subscribe
