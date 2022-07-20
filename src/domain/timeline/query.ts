@@ -1,4 +1,4 @@
 import { map, merge } from 'rxjs'
-import { addTimelineEvent$, achieveTimeline$ } from './command'
+import { nextTimelineEvent$, achieveTimeline$ } from './command'
 
-export const timelineEvents$ = merge(addTimelineEvent$, achieveTimeline$.pipe(map(() => ({ icon: 'star', color: 'gold' }))))
+export const timelineEvents$ = merge(nextTimelineEvent$, achieveTimeline$.pipe(map(() => ({ icon: 'star', color: 'gold' }))))

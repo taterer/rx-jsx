@@ -2,7 +2,7 @@ import { css } from "@emotion/css"
 import { from, interval, Subject, Subscription, timer } from "rxjs"
 import { scan, takeUntil, tap, withLatestFrom, concatMap } from "rxjs/operators"
 import { Route } from "../../domain/route"
-import { achieveTimeline, addTimelineEvent, Icon } from "../../domain/timeline/command"
+import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
 
 const title = '3'
@@ -89,7 +89,7 @@ export default function Exercise ({ destruction$ }) {
       concatMap(() => timer(1000)), // slow it down so we can see it separated in the timeline
     )
     .subscribe(i => {
-      addTimelineEvent({ icon: Icon.thumb_up, color: 'blue' })
+      nextTimelineEvent({ icon: Icon.thumb_up, color: 'blue' })
     })
   )
 
@@ -99,7 +99,7 @@ export default function Exercise ({ destruction$ }) {
       /* 
         Take until should go here
       */              
-      tap(() => addTimelineEvent({ icon: Icon.message, color: 'green' }))
+      tap(() => nextTimelineEvent({ icon: Icon.message, color: 'green' }))
     )
     .subscribe()
   )

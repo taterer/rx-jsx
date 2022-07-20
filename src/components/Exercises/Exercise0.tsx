@@ -1,5 +1,5 @@
 import { Route } from "../../domain/route"
-import { achieveTimeline, addTimelineEvent, Icon } from "../../domain/timeline/command"
+import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
 import { toElement$ } from "../../jsx"
 
 const title = 'Home'
@@ -25,12 +25,12 @@ export default function Exercise ({ destruction$ }) {
         <br />
         <div
           class='waves-effect waves-light btn red'
-          onclick={() => addTimelineEvent({ icon: Icon.mouse, color: 'red' })}>
+          onclick={() => nextTimelineEvent({ icon: Icon.mouse, color: 'red' })}>
           Red
         </div>
         <div element$={blueButton$}
           class='waves-effect waves-light btn blue'
-          onclick={() => addTimelineEvent({ icon: Icon.mouse, color: 'blue' })}>
+          onclick={() => nextTimelineEvent({ icon: Icon.mouse, color: 'blue' })}>
           Blue
         </div>
         <br />

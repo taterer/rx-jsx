@@ -1,7 +1,7 @@
 import { interval, Subscription } from "rxjs"
 import { share, takeUntil } from "rxjs/operators"
 import { Route } from "../../domain/route"
-import { achieveTimeline, addTimelineEvent, Icon } from "../../domain/timeline/command"
+import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
 import { toElement$ } from "../../jsx"
 
 const title = '1'
@@ -69,7 +69,7 @@ export default function Exercise ({ destruction$ }) {
         onclick={() => {
           subscriptions.push(
             interval$ // change this to sharedInterval$
-            .subscribe(i => addTimelineEvent({ icon: Icon.message, color: 'green' }))
+            .subscribe(i => nextTimelineEvent({ icon: Icon.message, color: 'green' }))
           )
         }}>
         Subscribe

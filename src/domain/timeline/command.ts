@@ -47,12 +47,12 @@ export enum Icon {
   work = 'work',
 }
 
-export interface AddTimelineEvent {
+export interface nextTimelineEvent {
   icon: Icon | 'star',
   color?: string,
   message?: string
 }
 
-export const [addTimelineEvent$, addTimelineEvent] = commandFactory<AddTimelineEvent>()
+export const [nextTimelineEvent$, nextTimelineEvent] = commandFactory<nextTimelineEvent>()
 
 export const [achieveTimeline$, achieveTimeline] = commandFactory<undefined>()

@@ -1,13 +1,14 @@
 import { css, cx } from "@emotion/css";
 import { merge, takeUntil, withLatestFrom } from "rxjs";
 import { Route } from "../../domain/route";
-import { pathname$, pathnameChange$, secondPathChange$ } from "../../domain/route/query";
+import { pathname$, pathnameChange$ } from "../../domain/route/query";
 import { toElement$, _withAnimationFrame_ } from "../../jsx";
 import { panel } from "../../styles";
 import { exercise0  } from "../../components/Exercises/Exercise0";
 import { exercise1  } from "../../components/Exercises/Exercise1";
 import { exercise2  } from "../../components/Exercises/Exercise2";
 import { exercise3  } from "../../components/Exercises/Exercise3";
+import { exercise4  } from "../../components/Exercises/Exercise4";
 import { pushHistory, replaceHistory } from "../../domain/route/command";
 import Timeline from "../../components/Timeline";
 import NavbarItem from "./NavbarItem";
@@ -18,6 +19,7 @@ const exercises = [
   exercise1,
   exercise2,
   exercise3,
+  exercise4,
 ]
 
 export default function Training ({ destruction$ }) {
@@ -43,7 +45,7 @@ export default function Training ({ destruction$ }) {
         setTimeline(
           <div>
             <Timeline destruction$={merge(destruction$, pathnameChange$)} />
-            <Timeline destruction$={merge(destruction$, pathnameChange$)} scroll={false} debug />
+            <Timeline destruction$={merge(destruction$, pathnameChange$)} scroll={false} /* debug */ />
           </div>)
         if (index > 0) {
           setBack(

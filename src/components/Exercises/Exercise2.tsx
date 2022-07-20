@@ -2,7 +2,7 @@ import { css } from "@emotion/css"
 import { interval, Subject, Subscription } from "rxjs"
 import { scan, takeUntil, withLatestFrom } from "rxjs/operators"
 import { Route } from "../../domain/route"
-import { achieveTimeline, addTimelineEvent, Icon } from "../../domain/timeline/command"
+import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
 import { toElement$ } from "../../jsx"
 
 const title = '2'
@@ -92,7 +92,7 @@ export default function Exercise ({ destruction$ }) {
       <div
         class='waves-effect waves-light btn green'
         onclick={() => {
-          subscription$.next(interval$.subscribe(i => addTimelineEvent({ icon: Icon.message, color: 'green' })))
+          subscription$.next(interval$.subscribe(i => nextTimelineEvent({ icon: Icon.message, color: 'green' })))
         }}>
         Subscribe
       </div>

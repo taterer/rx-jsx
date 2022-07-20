@@ -1,13 +1,12 @@
 import { css } from "@emotion/css"
-import { Subject } from "rxjs"
-import { tap, takeUntil, withLatestFrom, map } from "rxjs/operators"
-import { nextTimelineEvent, Icon } from "../../domain/timeline/command"
-import { timelineEvents$ } from "../../domain/timeline/query"
+import { takeUntil, withLatestFrom, map, concatMap } from "rxjs/operators"
+import { spy$ } from "../../App"
+import { Icon } from "../../domain/timeline/command"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
 import Explosion from "./Explosion"
 
 const animationTransform = [
-  { transform: 'translateX(0px)' },
+  { transform: 'translateX(120px)' },
   { transform: 'translateX(740px)' }
 ]
 
@@ -16,16 +15,18 @@ const animationTiming = {
   iterations: 1
 }
 
-export default function Timeline ({ destruction$, debug = false, scroll = true }) {
+export default function Timeline ({ destruction$, title, color, debug = false, scroll = true }) {
   const [timeline$] = toElement$(destruction$)
 
-  timelineEvents$
+  spy$
   .pipe(
+    concatMap(async i => i),
     withLatestFrom(timeline$),
     takeUntil(destruction$),
   )
-  .subscribe(([timelineEvent, timeline]) => {
-    const timelineElement = <i style={`position: ${scroll ? 'absolute' : ''}; color: ${timelineEvent.color}`} class="material-icons dp48">{timelineEvent.icon}</i>
+  .subscribe(([event, timeline]) => {
+    console.log('Something')
+    const timelineElement = <i style={`position: ${scroll ? 'absolute' : ''}; color: ${color}`} class="material-icons dp48">{Icon.message}</i>
     timeline.appendChild(timelineElement)
     if (scroll) {
       setTimeout(() => {
@@ -35,9 +36,6 @@ export default function Timeline ({ destruction$, debug = false, scroll = true }
       timelineElement.animate(animationTransform, animationTiming)
     }
 
-    if (timelineEvent.icon === 'star') {
-      timelineElement.appendChild(<Explosion destruction$={destruction$} icon='star' color='gold' particles={10} />)
-    }
     if (debug) {
       console.log('Timeline element', timelineElement)
     }
@@ -53,5 +51,7 @@ export default function Timeline ({ destruction$, debug = false, scroll = true }
       height: 40px;
       margin-top: 20px;
       margin-bottom: 20px;
-    `} />
+    `}>
+      {title}
+    </div>
 }
