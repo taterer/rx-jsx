@@ -2,7 +2,6 @@ import { css } from "@emotion/css"
 import { from, interval, Subject, Subscription, timer } from "rxjs"
 import { scan, takeUntil, tap, withLatestFrom, concatMap } from "rxjs/operators"
 import { Route } from "../../domain/route"
-import { Icon } from "../../domain/timeline/command"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
 import { tag } from "../../utils/tag"
 import { complete$ } from "../../views/Training"
@@ -90,7 +89,7 @@ export default function Exercise ({ destruction$ }) {
     from([1, 2, 3, 4, 5])
     .pipe(
       concatMap(() => timer(1000)), // slow it down so we can see it separated in the timeline
-      tag({ name: 'Exercise 3 Self Cleaning', color: 'green' })
+      tag({ name: 'Exercise 3 Self Cleaning', color: 'blue' })
     )
     .subscribe()
   )

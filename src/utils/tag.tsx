@@ -21,7 +21,7 @@ export function tag<T> (tag: Tag) {
   }
   return pipe(
     tagged,
-    tap(i => console.log(`%cTag%c "${tag.name}": ${i}`, `background: ${tag.color}`, `background: white`))
+    tap(i => console.log(`%cTag%c "${tag.name}": ${i}`, `background: ${tag.color}`, `background: white`)),
   )
 }
 

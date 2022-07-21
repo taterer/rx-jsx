@@ -1,6 +1,6 @@
 import { css } from "@emotion/css"
 import { Observable } from "rxjs"
-import { takeUntil, withLatestFrom, concatMap, filter, map } from "rxjs/operators"
+import { tap, takeUntil, withLatestFrom, concatMap, filter, map } from "rxjs/operators"
 import { Icon } from "../../domain/timeline/command"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
 import { parseTag, spy$ } from "../../utils/tag"
@@ -33,12 +33,11 @@ export default function Timeline ({
   spy$
   .pipe(
     filter(i => i.tag === rawTag),
-    map(() => tag),
     concatMap(async i => i),
     withLatestFrom(timeline$),
     takeUntil(destruction$),
   )
-  .subscribe(([tag, timeline]) => {
+  .subscribe(([spy, timeline]) => {
     const timelineElement = <i style={`position: ${scroll ? 'absolute' : ''}; color: ${tag.color || 'black'}`} class="material-icons dp48">{tag.icon || Icon.message}</i>
     timeline.appendChild(timelineElement)
     if (scroll) {
@@ -55,6 +54,10 @@ export default function Timeline ({
 
     if (debug) {
       console.log('Timeline element', timelineElement)
+    }
+
+    if (!tag.skipTap && spy.notitication === 'unsubscribe') {
+      console.log(`%cTag%c "${tag.name}": Unsubscribe`, `background: ${tag.color}`, `background: white`)
     }
   })
 
