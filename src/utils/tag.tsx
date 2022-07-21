@@ -1,6 +1,6 @@
 import { css, cx } from "@emotion/css";
-import { BehaviorSubject, EMPTY, Observable } from 'rxjs'
-import { filter, map, share, take, withLatestFrom } from 'rxjs/operators'
+import { BehaviorSubject, EMPTY, Observable, pipe } from 'rxjs'
+import { filter, map, share, take, tap, withLatestFrom } from 'rxjs/operators'
 import { tag as ogTag } from "rxjs-spy/cjs/operators";
 import { create } from "rxjs-spy";
 import { panel } from "../styles";
@@ -9,12 +9,20 @@ import Explosion from "../components/Debugger/Explosion";
 
 export interface Tag {
   name: string
+  tap?: boolean
   icon?: string
   color?: string
 }
 
 export function tag<T> (tag: Tag) {
-  return ogTag<T>(JSON.stringify({ ...tag, id: Math.random() }))
+  const tagged = ogTag<T>(JSON.stringify({ ...tag, id: Math.random() }))
+  if (tag.tap) {
+    return pipe(
+      tagged,
+      tap(i => console.log(`%cTag%c "${tag.name}": ${i}`, `background: ${tag.color}`, `background: white`))
+    )
+  }
+  return tagged
 }
 
 export function parseTag (tag: string): Tag {
@@ -42,15 +50,25 @@ function View () {
     <div id='mydivheader' class={cx(
       panel,
       css`
-        position: absolute;
+        position: fixed;
+        bottom: 25px;
+        left: 25px;
+        padding: 0px;
         overflow: auto;
+        height: fit-content;
         max-height: 800px;
         margin: 0px;
         z-index: 2;
       `
     )}>
-      <div>
-        Timeline (debugging)
+      <div class={css`
+        font-size: 1.2em;
+        font-weight: 700;
+        background-color: #ff00aa;
+        padding: 20px;
+        margin-bottom: 15px;
+      `}>
+        RxJS Debugger
       </div>
     </div>
   )
@@ -115,7 +133,11 @@ spy$
   withLatestFrom(view$),
 )
 .subscribe(([spy, view]) => {
-  const timeline = <Debugger destruction$={EMPTY} rawTag={spy.tag} />
+  const timeline = <div class={css`
+    padding: 10px 20px;
+  `}>
+    <Debugger destruction$={EMPTY} rawTag={spy.tag} />
+  </div>
   view.appendChild(timeline)
   spy$
   .pipe(
@@ -124,10 +146,10 @@ spy$
   )
   .subscribe(() => {
     timeline.appendChild(<div class={css`
-      margin: 20px 80px;
+      margin: -1.2em;
       position: absolute;
     `}>
-      <Explosion destruction$={EMPTY} icon='flare' color='red' particles={20} />
+      <Explosion destruction$={EMPTY} icon='flare' color='red' particles={15} />
     </div>)
     setTimeout(() => {
       timeline.remove()

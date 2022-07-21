@@ -66,8 +66,6 @@ export default function Timeline ({
       position: relative;
       width: 100%;
       height: 40px;
-      margin-top: 20px;
-      margin-bottom: 20px;
     `}>
       {tag.name}
     </div>

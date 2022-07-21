@@ -48,8 +48,6 @@ export default function Exercise ({ destruction$ }) {
         */
         // use the subscription variable here to unsubscribe
         // this.remove() // optionally remove the unsubscribe element
-        subscription.unsubscribe()
-        this.remove()
       }}>
       Unsubscribe
     </div>)
@@ -70,7 +68,6 @@ export default function Exercise ({ destruction$ }) {
     takeUntil(destruction$)
   )
   .subscribe(([_, subscriptions]) => {
-    console.log('subscriptions', subscriptions)
     if (!success && subscriptions.length > 1 && subscriptions.every(i => i.closed)) {
       complete$.next(undefined)
       success = true
@@ -99,7 +96,7 @@ export default function Exercise ({ destruction$ }) {
           subscription$.next(
             interval$
             .pipe(
-              tag({ name: 'Subscription', color: 'green' }),
+              tag({ name: 'Exercise 2 Subscription', color: 'green' }),
             )
             .subscribe())
         }}>

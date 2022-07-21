@@ -81,7 +81,7 @@ export default function Training ({ destruction$ }) {
 
   complete$
   .pipe(
-    tag({ name: 'Complete', color: 'gold', icon: 'star' }),
+    tag({ name: 'Complete', color: 'gold', icon: 'star', tap: true }),
     withLatestFrom(forward$),
     takeUntil(destruction$)
   )

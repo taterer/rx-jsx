@@ -27,6 +27,7 @@ export default function Exercise ({ destruction$ }) {
   const subscriptions: Subscription[] = []
   const sharedInterval$ = interval$
   .pipe(
+    tag({ name: 'Exercise 1 Shared', color: 'green' }),
     share()
   )
   const subscription = undefined // create a new subscription of the sharedInterval$ observable
@@ -73,7 +74,7 @@ export default function Exercise ({ destruction$ }) {
           subscriptions.push(
             interval$ // change this to sharedInterval$
             .pipe(
-              tag({ name: 'Subscription' })
+              tag({ name: 'Exercise 1 Subscription', color: 'green' })
             )
             .subscribe(i => event$.next(undefined))
           )

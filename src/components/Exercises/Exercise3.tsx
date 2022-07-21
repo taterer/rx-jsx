@@ -2,8 +2,10 @@ import { css } from "@emotion/css"
 import { from, interval, Subject, Subscription, timer } from "rxjs"
 import { scan, takeUntil, tap, withLatestFrom, concatMap } from "rxjs/operators"
 import { Route } from "../../domain/route"
-import { achieveTimeline, nextTimelineEvent, Icon } from "../../domain/timeline/command"
+import { Icon } from "../../domain/timeline/command"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
+import { tag } from "../../utils/tag"
+import { complete$ } from "../../views/Training"
 
 const title = '3'
 const path = `/${Route.training}/3`
@@ -38,8 +40,8 @@ export default function Exercise ({ destruction$ }) {
     withLatestFrom(subElement$),
     takeUntil(destruction$)
   )
-  .subscribe(([subscription, subElelement]) => {
-    subElelement.appendChild(<div
+  .subscribe(([subscription, subElement]) => {
+    subElement.appendChild(<div
       disabled
       class='waves-effect waves-light btn red'
       onclick={function () {
@@ -64,7 +66,7 @@ export default function Exercise ({ destruction$ }) {
   )
   .subscribe(([_, subscriptions]) => {
     if (!success && subscriptions.length > 1 && subscriptions.every(i => i.closed)) {
-      achieveTimeline(undefined)
+      complete$.next(undefined)
       success = true
     }
   })
@@ -74,6 +76,7 @@ export default function Exercise ({ destruction$ }) {
   destructionStream$
   .pipe(
     withLatestFrom(subElement$),
+    tag({ name: 'Exercise 3 Destruction', color: 'red' }),
     takeUntil(destruction$)
   )
   .subscribe(([_, subElement]) => {
@@ -87,19 +90,18 @@ export default function Exercise ({ destruction$ }) {
     from([1, 2, 3, 4, 5])
     .pipe(
       concatMap(() => timer(1000)), // slow it down so we can see it separated in the timeline
+      tag({ name: 'Exercise 3 Self Cleaning', color: 'green' })
     )
-    .subscribe(i => {
-      nextTimelineEvent({ icon: Icon.thumb_up, color: 'blue' })
-    })
+    .subscribe()
   )
 
   subscription$.next(
     interval$
     .pipe(
+      tag({ name: 'Exercise 3 Subscription', color: 'green' }),
       /* 
         Take until should go here
       */              
-      tap(() => nextTimelineEvent({ icon: Icon.message, color: 'green' }))
     )
     .subscribe()
   )
