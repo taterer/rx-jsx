@@ -16,14 +16,14 @@ export default function Exercise ({ destruction$ }) {
 
   red$
   .pipe(
-    tag({ name: 'Exercise 1 Red', color: 'red', icon: Icon.message, tap: true }),
+    tag({ name: 'Exercise 1 Red', color: 'red', icon: Icon.message }),
     takeUntil(destruction$),
   )
   .subscribe()
 
   blue$
   .pipe(
-    tag({ name: 'Exercise 1 Blue', color: 'blue', icon: Icon.message, tap: true }),
+    tag({ name: 'Exercise 1 Blue', color: 'blue', icon: Icon.message }),
     takeUntil(destruction$),
   )
   .subscribe()

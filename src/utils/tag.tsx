@@ -9,20 +9,20 @@ import Explosion from "../components/Debugger/Explosion";
 
 export interface Tag {
   name: string
-  tap?: boolean
+  skipTap?: boolean
   icon?: string
   color?: string
 }
 
 export function tag<T> (tag: Tag) {
   const tagged = ogTag<T>(JSON.stringify({ ...tag, id: Math.random() }))
-  if (tag.tap) {
-    return pipe(
-      tagged,
-      tap(i => console.log(`%cTag%c "${tag.name}": ${i}`, `background: ${tag.color}`, `background: white`))
-    )
+  if (tag.skipTap) {
+    return tagged
   }
-  return tagged
+  return pipe(
+    tagged,
+    tap(i => console.log(`%cTag%c "${tag.name}": ${i}`, `background: ${tag.color}`, `background: white`))
+  )
 }
 
 export function parseTag (tag: string): Tag {
