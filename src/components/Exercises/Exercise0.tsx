@@ -38,7 +38,7 @@ export default function Exercise ({ destruction$ }) {
         Each exercise will prompt you to change the code. The code you will change is in the corresponding exercise file in the repository `src/components/Exercises`.
         <br />
         <br />
-        While working on each exercise, there will be two visual time lines you can use to debug your code. One shows a scrolling timeline of events, while the other retains the full history.
+        While working on each exercise, use the RxJS debugger in the bottom left. It shows any active subscriptions (that have been tagged), and any events going through them. Tagged pipes will also have corresponding logs in the console.
         <br />
         <br />
         Click on the buttons below to see how it looks.
@@ -55,7 +55,7 @@ export default function Exercise ({ destruction$ }) {
         </div>
         <br />
         <br />
-        In order to move to the next exercise, the requirements presented by the exercise must be met. There will be comments in the code indicating where the changes should be made. When the requirementsare are met you will see a golden star in the timeline.
+        In order to move to the next exercise, the requirements presented by the exercise must be met. There will be comments in the code indicating where the changes should be made. When the requirements are are met you will see a golden star in the timeline.
         <br />
         <br />
         Click on the star button to move on to the first exercise.
