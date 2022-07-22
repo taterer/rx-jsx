@@ -12,7 +12,7 @@ import { exercise4  } from "../../components/Exercises/Exercise4";
 import { pushHistory, replaceHistory } from "../../domain/route/command";
 import NavbarItem from "./NavbarItem";
 import { Subject } from "rxjs";
-import { tag } from "../../utils/tag";
+import { tag } from "../../components/Debugger/tag";
 
 const exercises = [
   exercise0,

@@ -3,9 +3,9 @@ import { BehaviorSubject, EMPTY, Observable, pipe } from 'rxjs'
 import { filter, map, share, take, tap, withLatestFrom } from 'rxjs/operators'
 import { tag as ogTag } from "rxjs-spy/cjs/operators";
 import { create } from "rxjs-spy";
-import { panel } from "../styles";
-import Debugger from "../components/Debugger";
-import Explosion from "../components/Debugger/Explosion";
+import { panel } from "../../styles";
+import Debugger from ".";
+import Explosion from "./Explosion";
 
 export interface Tag {
   name: string

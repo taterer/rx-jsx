@@ -1,9 +1,8 @@
 import { interval, Subject, Subscription } from "rxjs"
 import { share, takeUntil } from "rxjs/operators"
 import { Route } from "../../domain/route"
-import { Icon } from "../../domain/timeline/command"
 import { toElement$ } from "../../jsx"
-import { tag } from "../../utils/tag"
+import { tag } from "../Debugger/tag"
 import { complete$ } from "../../views/Training"
 
 const title = '1'

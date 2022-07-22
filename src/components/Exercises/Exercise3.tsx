@@ -3,7 +3,7 @@ import { from, interval, Subject, Subscription, timer } from "rxjs"
 import { scan, takeUntil, tap, withLatestFrom, concatMap } from "rxjs/operators"
 import { Route } from "../../domain/route"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
-import { tag } from "../../utils/tag"
+import { tag } from "../Debugger/tag"
 import { complete$ } from "../../views/Training"
 
 const title = '3'

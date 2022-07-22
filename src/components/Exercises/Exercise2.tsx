@@ -3,7 +3,7 @@ import { interval, Subject, Subscription } from "rxjs"
 import { scan, takeUntil, withLatestFrom } from "rxjs/operators"
 import { Route } from "../../domain/route"
 import { toElement$ } from "../../jsx"
-import { tag } from "../../utils/tag"
+import { tag } from "../Debugger/tag"
 import { complete$ } from "../../views/Training"
 
 const title = '2'
