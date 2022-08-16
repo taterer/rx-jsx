@@ -1,6 +1,6 @@
 import { css } from "@emotion/css"
 import { Observable } from "rxjs"
-import { tap, takeUntil, withLatestFrom, concatMap, filter, map } from "rxjs/operators"
+import { takeUntil, withLatestFrom, concatMap, filter } from "rxjs/operators"
 import { Icon } from "../../domain/timeline/command"
 import { toElement$, _withAnimationFrame_ } from "../../jsx"
 import { parseTag, spy$ } from "./tag"
