@@ -6,6 +6,7 @@ import { pathname$, pathnameChange$ } from "../../domain/route/query";
 import { toElement$, _withAnimationFrame_ } from "../../jsx";
 import { panel } from "../../styles";
 import { exercise0  } from "../../components/Exercises/Exercise0";
+import { exerciseIntro  } from "../../components/Exercises/ExerciseIntro";
 import { exercise1  } from "../../components/Exercises/Exercise1";
 import { exercise2  } from "../../components/Exercises/Exercise2";
 import { exercise3  } from "../../components/Exercises/Exercise3";
@@ -16,6 +17,7 @@ import { Subject } from "rxjs";
 
 const exercises = [
   exercise0,
+  exerciseIntro,
   exercise1,
   exercise2,
   exercise3,
