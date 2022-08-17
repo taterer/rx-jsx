@@ -1125,6 +1125,14 @@
   dependencies:
     tslib "^2.4.0"
 
+"@taterer/rxjs-debugger@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@taterer/rxjs-debugger/-/rxjs-debugger-1.0.2.tgz#a6d8335903f6e8a5a47e81345b597e401d0ac885"
+  integrity sha512-1sC5390WWEfEPo7aF29jc7Serq/j5pbJNxIfMi8ZYGWn0aBO206gQHmRNzpULNVvgvtN8SyOx/mOXVjpd/y2Yg==
+  dependencies:
+    "@emotion/css" "^11.9.0"
+    uuid "^8.3.2"
+
 "@trysound/sax@0.2.0":
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/@trysound/sax/-/sax-0.2.0.tgz#cccaab758af56761eb7bf37af6f03f326dd798ad"

@@ -1,5 +1,6 @@
 import { css, cx } from "@emotion/css";
 import { takeUntil, withLatestFrom } from "rxjs/operators";
+import { tag } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route";
 import { pathname$, pathnameChange$ } from "../../domain/route/query";
 import { toElement$, _withAnimationFrame_ } from "../../jsx";
@@ -12,7 +13,6 @@ import { exercise4  } from "../../components/Exercises/Exercise4";
 import { pushHistory, replaceHistory } from "../../domain/route/command";
 import NavbarItem from "./NavbarItem";
 import { Subject } from "rxjs";
-import { tag } from "../../components/Debugger/tag";
 
 const exercises = [
   exercise0,

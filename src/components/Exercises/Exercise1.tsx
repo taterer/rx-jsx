@@ -1,8 +1,8 @@
 import { interval, Subject, Subscription } from "rxjs"
 import { share, takeUntil } from "rxjs/operators"
+import { tag } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route"
 import { toElement$ } from "../../jsx"
-import { tag } from "../Debugger/tag"
 import { complete$ } from "../../views/Training"
 
 const title = '1'

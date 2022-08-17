@@ -1,8 +1,7 @@
 import { Subject, takeUntil } from "rxjs"
+import { tag, Icon } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route"
-import { Icon } from "../../domain/timeline/command"
 import { toElement$ } from "../../jsx"
-import { tag } from "../Debugger/tag"
 import { complete$ } from "../../views/Training"
 
 const title = 'Home'
@@ -16,14 +15,14 @@ export default function Exercise ({ destruction$ }) {
 
   red$
   .pipe(
-    tag({ name: 'Exercise 1 Red', color: 'red', icon: Icon.message }),
+    tag({ name: 'Welcome Red', color: 'red', icon: Icon.hotel }),
     takeUntil(destruction$),
   )
   .subscribe()
 
   blue$
   .pipe(
-    tag({ name: 'Exercise 1 Blue', color: 'blue', icon: Icon.message }),
+    tag({ name: 'Welcome Blue', color: 'blue', icon: Icon.train }),
     takeUntil(destruction$),
   )
   .subscribe()
