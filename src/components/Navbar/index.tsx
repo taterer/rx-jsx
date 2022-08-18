@@ -14,11 +14,10 @@ export default function Navbar ({ destruction$ }) {
       `}>
         <nav class='blue'>
             <ul id='nav-mobile'>
-              <NavbarItem destruction$={destruction$} path={Route.home} title="Home" />
+              <NavbarItem destruction$={destruction$} path={Route.training} title="Home" />
               <NavbarItem destruction$={destruction$} path={Route.mortgage} title="Mortgage" />
               <NavbarItem destruction$={destruction$} path={Route.draw} title="Draw" />
               <NavbarItem destruction$={destruction$} path={Route.babylon} title="Babylon" />
-              <NavbarItem destruction$={destruction$} path={Route.training} title="Training" />
               <NavbarItem destruction$={destruction$} path={'asdf'} title="Else" />
             </ul>
         </nav>

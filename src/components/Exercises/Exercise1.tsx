@@ -1,108 +1,71 @@
-import { interval, Subject, Subscription } from "rxjs"
-import { share, takeUntil } from "rxjs/operators"
-import { tag } from "@taterer/rxjs-debugger";
+import { tag } from "@taterer/rxjs-debugger"
+import { fromEvent, Observable, takeUntil } from "rxjs"
 import { Route } from "../../domain/route"
 import { toElement$ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
 const title = '1'
-const path = `/${Route.training}/1`
-
-const animationTransform = [
-  { transform: 'scale(2)' },
-  { transform: 'scale(1)' },
-]
-
-const animationTiming = {
-  duration: 3000,
-  iterations: Infinity
-}
+const path = `/${Route.training}/${title}`
 
 export default function Exercise ({ destruction$ }) {
-  let success
-  const event$ = new Subject()
-  const [threeSecond$] = toElement$(destruction$)
-  const interval$ = interval(animationTiming.duration)
-  const subscriptions: Subscription[] = []
-  const sharedInterval$ = interval$
-  .pipe(
-    tag({ name: 'Exercise 1 Shared', color: 'green' }),
-    share()
-  )
-  const subscription = undefined // create a new subscription of the sharedInterval$ observable
+  const [button$] = toElement$(destruction$) // this will give us an observable, which will contain the element once it is mounted to the dom
 
-  threeSecond$
+  button$
   .pipe(
     takeUntil(destruction$)
   )
-  .subscribe(threeSecond => {
-    threeSecond.animate(animationTransform, animationTiming)
-  })
+  .subscribe(button => {
+    // button is the green button we want to attach a listener to
+    let observable: Observable<any>
 
-  // success checker
-  interval$
-  .pipe(
-    takeUntil(destruction$)
-  )
-  .subscribe(() => {
-    if (!success && subscription && subscriptions.length) {
-      complete$.next(undefined)
-      success = true
+    // create an observable for click events on the button element
+    // EG: observable = fromEvent(button, 'click')
+
+    // automatically subscribe to our newly created observable
+    if (observable) {
+      observable
+      .pipe(
+        tag({ name: `Exercise ${title} Button`, color: 'green' }),
+        takeUntil(destruction$)
+      )
+      .subscribe(() => complete$.next(undefined))
     }
   })
 
   return (
     <div>
       <h3>Exercise {title}</h3>
-      When you create a pipe, it's easy to forget to subscribe. The pipe will be created, but no events will actually be processed until you subscribe.
-      <br />
-      <br />
       <div>
-        <i element$={threeSecond$} class="material-icons dp48">timer_3</i>
+        The first thing we need is an observable. In order to pipe or subscribe, we need some source.
+        <br />
+        <br />
+        There are many forms of observables. Intervals as an example will emit every x milliseconds.
+        Any <a href="https://www.w3schools.com/jsref/dom_obj_event.asp" target="_blank">DOM Events</a> can be turned into an observable.
+        <br />
+        <br />
+        Let's create an observable. In src/components/Exercises/Exercise1.tsx file update the code to create an observable for clicks on the button below.
+        <br />
+        <br />
+        <div
+          class='btn green'
+          element$={button$} // FYI this is where the rx-jsx library comes in, it will look for element$ and push through newly mounted elements with this tag using the provided subject
+          >BUTTON</div>
+        <br />
+        <br />
+        Once we have an observable, we can subscribe to the events, combine the events with others, and create the flow for our application.
+        <br />
+        <br />
+        In this exercise, the subscriber is already wired up.
+        Once the observable is setup, we'll just need to click the button and emit an event to complete the exercise.
+        <br />
+        <br />
+        We'll look at alternative solutions in the next exercise.
       </div>
-      <br />
-      Not only will no events be handled, the event emitter itself will not be created. This animation is deceiving, because nothing is being emitted. An interval is created when you click subscribe.
-      <br />
-      <br />
-      See what happens when you click subscribe multiple times.
-      <br />
-      <br />
-      <div
-        class='waves-effect waves-light btn green'
-        onclick={() => {
-          subscriptions.push(
-            interval$ // change this to sharedInterval$
-            .pipe(
-              tag({ name: 'Exercise 1 Subscription', color: 'green' })
-            )
-            .subscribe(i => event$.next(undefined))
-          )
-        }}>
-        Subscribe
-      </div>
-      <br />
-      <br />
-      The messages are not in sync with each other, or the animation which began when the component mounted, since they are all on their own 3 second intervals.
-      <br />
-      <br />
-      Let's sync them all with the animation. Change the subscription from using "interval$" to "sharedInterval$" and then double click on Subscribe again.
-      <br />
-      <br />
-      The sharedInterval$ uses "share()" in its pipe, which means it will not create a new interval for each subscription, but use the same underlying observable.
-      <br />
-      <br />
-      This got us most of the way there, but it's still not in sync with the animation. As a simple exercise, let's keep it simple, and just subscribe immediately, so the interval matches the animation. Create a subscription to sharedInterval$ when we create the "subscription" const.
-      <br />
-      <br />
-      Ahh, it's much nicer when things line up.
-      <br />
-      <br />
-      Unless you skipped changing the interval$ to sharedInterval$, but that's fine. Let's move onto the next exercise.
     </div>
   )
 }
 
-export const exercise1 = {
+export const exercise = {
   Exercise,
   path,
   title

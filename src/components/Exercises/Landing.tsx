@@ -1,13 +1,14 @@
 import { Route } from "../../domain/route"
 import { complete$ } from "../../views/Training"
 
-const title = 'Intro'
-const path = `/${Route.training}/intro`
+const title = 'RxJS'
+const path = `/${Route.training}/rxjs`
 
 export default function Exercise ({ destruction$ }) {
   setTimeout(() => {
     complete$.next(undefined)
   })
+
   return (
     <div>
       <h3>{title}</h3>
@@ -38,7 +39,9 @@ export default function Exercise ({ destruction$ }) {
       <br />
       <br />
       Using the RxJS observable pattern, and keeping pipes clean (subscriptions should be the only place for side effects)
-      your code can be more declarative, because nothing happens without a subscription, and data should be the defacto form of <a href='https://en.wikipedia.org/wiki/Coupling_(computer_programming)' target='_blank'>coupling</a>.
+      your code can be more declarative, because nothing happens without a subscription,
+      and data should be the defacto form of <a href='https://en.wikipedia.org/wiki/Coupling_(computer_programming)' target='_blank'>coupling</a>.
+      Pure functions are the best. <a href="https://rxjs.dev/guide/overview" target='_blank'>RxJS.dev</a>
       <br />
       <br />
       "We are not aware of any languages that provide asynchronous communication with dynamic processes.
@@ -50,7 +53,7 @@ export default function Exercise ({ destruction$ }) {
   )
 }
 
-export const exerciseIntro = {
+export const landing = {
   Exercise,
   path,
   title

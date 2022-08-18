@@ -1,124 +1,67 @@
-import { css } from "@emotion/css"
-import { interval, Subject, Subscription } from "rxjs"
-import { scan, takeUntil, withLatestFrom } from "rxjs/operators"
-import { tag } from "@taterer/rxjs-debugger";
+import { Subject, takeUntil } from "rxjs"
 import { Route } from "../../domain/route"
-import { toElement$ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
 const title = '2'
-const path = `/${Route.training}/2`
-
-const animationTransform = [
-  { transform: 'scale(2)' },
-  { transform: 'scale(1)' },
-]
-
-const animationTiming = {
-  duration: 3000,
-  iterations: Infinity
-}
+const path = `/${Route.training}/${title}`
 
 export default function Exercise ({ destruction$ }) {
-  let success
-  const [subElement$] = toElement$(destruction$);
-  const [threeSecond$] = toElement$(destruction$)
-  const interval$ = interval(animationTiming.duration)
-  const subscription$ = new Subject<Subscription>();
-  const subscriptions$ = subscription$
-  .pipe(
-    scan((acc, subscription) => {
-      acc.push(subscription)
-      return acc
-    }, [] as Subscription[])
-  )
-
-  subscription$
-  .pipe(
-    withLatestFrom(subElement$),
-    takeUntil(destruction$)
-  )
-  .subscribe(([subscription, subElelement]) => {
-    subElelement.appendChild(<div
-      class='waves-effect waves-light btn red'
-      onclick={function () {
-        /*
-        This is where we are manually calling unsubscribe on each subscription
-        and what could be returned inside of a useEffect function in React
-        */
-        // use the subscription variable here to unsubscribe
-        // this.remove() // optionally remove the unsubscribe element
-      }}>
-      Unsubscribe
-    </div>)
-  })
-
-  threeSecond$
+  const buttonClick$ = new Subject()
+  
+  buttonClick$
   .pipe(
     takeUntil(destruction$)
-  )
-  .subscribe(threeSecond => {
-    threeSecond.animate(animationTransform, animationTiming)
-  })
+  ).subscribe(() => complete$.next(undefined))
 
-  // success checker
-  interval$
-  .pipe(
-    withLatestFrom(subscriptions$),
-    takeUntil(destruction$)
-  )
-  .subscribe(([_, subscriptions]) => {
-    if (!success && subscriptions.length > 1 && subscriptions.every(i => i.closed)) {
-      complete$.next(undefined)
-      success = true
-    }
-  })
+  function clickHandler () {
+    // EG: buttonClick$.next(undefined)
+  }
 
   return (
     <div>
       <h3>Exercise {title}</h3>
-      If you just finished exercise 1, you might notice that there are still events firing in the timeline. Uh-oh! This website must be buggy. We didn't clean up the subscriptions!
-      <br />
-      <br />
-      It may be easy to forget to subscribe, but it's usually pretty straightforward to figure that out. How do you know if you forget to unsubscribe? Well, you might notice a memory leak. Let's find a better way.
-      <br />
-      <br />
       <div>
-        <i element$={threeSecond$} class="material-icons dp48">timer_3</i>
+        Another core tool in RxJS is the subject. Subjects are "multicast" meaning each subscription shares the same underlying observable, but we'll talk about that more in the next exercise.
+        <br />
+        <br />
+        A subject gives us the ability to easily push into a pipe, when there isn't an event handler that can be easily wrapped as an observable.
+        <br />
+        <br />
+        To accomplish the same task as the previous exercise, let's use a subject. In the code you will see the "buttonClick$" subject. Note the use of "$" in naming observables and subjects.
+        <br />
+        <br />
+        The subject does not have an underlying event that causes it to emit. It is waiting to be written to.
+        It's like promising someone their phone will ring when someone calls their number, before giving them a phone.
+        We don't know the exact source, but we have the destination setup for the events.
+        <br />
+        <br />
+        It is important to avoid prescribing the ultimate destinations (the subscribers), because we don't need or want to know all of the users of an observable. This allows us to create pure code.
+        <br />
+        <br />
+        The subject bridges the gap between events of possibly unknown origin or origins, and the subscribers.
+        Subscribers have something to subscribe to, before event emitters are created.
+        <br />
+        <br />
+        Subject in hand, let's create an onclick handler for the button below.
+        <br />
+        <br />
+        <div
+          class='btn green'
+          // onclick={clickHandler}
+          >BUTTON</div>
+        <br />
+        <br />
+        Make sure the clickHandler is pushing "undefined" to the complete$ subject.
+        Once the onclick handler is setup, we'll just need to click the button and emit an event to complete the exercise.
+        <br />
+        <br />
+        We'll practice creating subscriptions in the next exercise.
       </div>
-      <br />
-      Make a few subscribtions by clicking Subscribe (at least 2).
-      <br />
-      <br />
-      <div
-        class='waves-effect waves-light btn green'
-        onclick={() => {
-          subscription$.next(
-            interval$
-            .pipe(
-              tag({ name: 'Exercise 2 Subscription', color: 'green' }),
-            )
-            .subscribe())
-        }}>
-        Subscribe
-      </div>
-      <br />
-      <br />
-      One way we could solve this is just manually calling unsubscribe on every subscription. This could be done automatically in the cleanup of a useEffect where the subscription is created.
-      <br />
-      <br />
-      Update the onclick handler for the Unsubscribe buttons to unsubscribe, and remove the element.
-      <br />
-      <br />
-      <div element$={subElement$} class={css`
-        display: flex;
-        flex-direction: column;
-      `} />
     </div>
   )
 }
 
-export const exercise2 = {
+export const exercise = {
   Exercise,
   path,
   title

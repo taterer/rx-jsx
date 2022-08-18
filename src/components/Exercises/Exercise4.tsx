@@ -1,13 +1,13 @@
 import { css } from "@emotion/css"
-import { from, interval, Subject, Subscription, timer } from "rxjs"
-import { scan, takeUntil, tap, withLatestFrom, concatMap } from "rxjs/operators"
+import { interval, Subject, Subscription } from "rxjs"
+import { scan, takeUntil, withLatestFrom } from "rxjs/operators"
 import { tag } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route"
-import { toElement$, _withAnimationFrame_ } from "../../jsx"
+import { toElement$ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
 const title = '4'
-const path = `/${Route.training}/4`
+const path = `/${Route.training}/${title}`
 
 const animationTransform = [
   { transform: 'scale(2)' },
@@ -21,7 +21,6 @@ const animationTiming = {
 
 export default function Exercise ({ destruction$ }) {
   let success
-
   const [subElement$] = toElement$(destruction$);
   const [threeSecond$] = toElement$(destruction$)
   const interval$ = interval(animationTiming.duration)
@@ -39,11 +38,16 @@ export default function Exercise ({ destruction$ }) {
     withLatestFrom(subElement$),
     takeUntil(destruction$)
   )
-  .subscribe(([subscription, subElement]) => {
-    subElement.appendChild(<div
-      disabled
+  .subscribe(([subscription, subElelement]) => {
+    subElelement.appendChild(<div
       class='waves-effect waves-light btn red'
       onclick={function () {
+        /*
+        This is where we are manually calling unsubscribe on each subscription
+        and what could be returned inside of a useEffect function in React
+        */
+        // use the subscription variable here to unsubscribe
+        // this.remove() // optionally remove the unsubscribe element
       }}>
       Unsubscribe
     </div>)
@@ -70,79 +74,51 @@ export default function Exercise ({ destruction$ }) {
     }
   })
 
-  const destructionStream$ = new Subject()
-
-  destructionStream$
-  .pipe(
-    withLatestFrom(subElement$),
-    tag({ name: 'Exercise 4 Destruction', color: 'red' }),
-    takeUntil(destruction$)
-  )
-  .subscribe(([_, subElement]) => {
-    while (subElement.firstChild) {
-      subElement.removeChild(subElement.firstChild)
-    }
-  })
-
-  // example array that self completes
-  subscription$.next(
-    from([1, 2, 3, 4, 5])
-    .pipe(
-      concatMap(() => timer(1000)), // slow it down so we can see it separated in the timeline
-      tag({ name: 'Exercise 4 Self Cleaning', color: 'green' })
-    )
-    .subscribe()
-  )
-
-  subscription$.next(
-    interval$
-    .pipe(
-      tag({ name: 'Exercise 4 Subscription', color: 'green' }),
-      takeUntil(destructionStream$)           
-    )
-    .subscribe()
-  )
-
   return (
     <div>
       <h3>Exercise {title}</h3>
-      Another way to clean up subscriptions (my preferred) is to use takeUntil().
+      If you are coming from the previous exercise, you might notice that there are still events firing in the timeline. Uh-oh! This website must be buggy. We didn't clean up the subscriptions!
       <br />
       <br />
-      Some observables will clean themselves up. Subscriptions will clean themselves up whenever the observable emits "complete." Which never happens with an interval, but other things like from([1,2,3]) would complete immediately after emitting each item in the array. Or of(fetch(...)) would complete when the fetch promise resolves.
-      <br />
-      <br />
-      One more example of a self completing subscription is with the "take()" operator. It will complete once the subscription receives the supplied number of emissions.
+      It may be easy to forget to subscribe, but it's usually pretty straightforward to figure that out. How do you know if you forget to unsubscribe? Well, you might notice a memory leak. Let's find a better way.
       <br />
       <br />
       <div>
         <i element$={threeSecond$} class="material-icons dp48">timer_3</i>
       </div>
       <br />
+      Make a few subscribtions by clicking Subscribe (at least 2).
       <br />
-      When each subscription is setup with takeUntil, it will unsubscribe and clean up whenever the observable inside takeUntil emits.
+      <br />
+      <div
+        class='waves-effect waves-light btn green'
+        onclick={() => {
+          subscription$.next(
+            interval$
+            .pipe(
+              tag({ name: `Exercise ${title} Subscription`, color: 'green' }),
+            )
+            .subscribe())
+        }}>
+        Subscribe
+      </div>
+      <br />
+      <br />
+      One way we could solve this is just manually calling unsubscribe on every subscription. This could be done automatically in the cleanup of a useEffect where the subscription is created.
+      <br />
+      <br />
+      Update the onclick handler for the Unsubscribe buttons to unsubscribe, and remove the element.
       <br />
       <br />
       <div element$={subElement$} class={css`
         display: flex;
         flex-direction: column;
       `} />
-      <br />
-      <br />
-      Modify the code to takeUntil destructionStream$ emits. Note: the UI elements will be removed when you click Emit Destruction, but that doesn't necessarily mean the underlying subscriptions are completed.
-      <br />
-      <div
-        class='waves-effect waves-light btn red'
-        onclick={() => {
-          destructionStream$.next(undefined)
-        }}>
-        Emit Destruction
-      </div>
     </div>
   )
 }
 
-export const exercise4 = {
+export const exercise = {
   Exercise,
   path,
   title

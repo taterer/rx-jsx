@@ -4,8 +4,8 @@ import { Route } from "../../domain/route"
 import { toElement$ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
-const title = 'Home'
-const path = `/${Route.training}/0`
+const title = 'Intro'
+const path = `/${Route.training}/intro`
 
 export default function Exercise ({ destruction$ }) {
   const [blueButton$] = toElement$(destruction$)
@@ -30,8 +30,11 @@ export default function Exercise ({ destruction$ }) {
   return (
     <div>
       <div>
-        <h3>Welcome</h3>
+        <h3>Intro</h3>
         Practice working with RxJS, and take your Observables to the .next() level!
+        <br />
+        <br />
+        To work through the exercises, clone the RxJS repo from <a href="https://github.com/taterer/rx-jsx" target="_blank">https://github.com/taterer/rx-jsx</a>.
         <br />
         <br />
         Each exercise will prompt you to change the code. The code you will change is in the corresponding exercise file in the repository `src/components/Exercises`.
@@ -69,7 +72,7 @@ export default function Exercise ({ destruction$ }) {
   )
 }
 
-export const exercise0 = {
+export const intro = {
   Exercise,
   path,
   title

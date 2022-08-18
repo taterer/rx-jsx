@@ -5,23 +5,25 @@ import { Route } from "../../domain/route";
 import { pathname$, pathnameChange$ } from "../../domain/route/query";
 import { toElement$, _withAnimationFrame_ } from "../../jsx";
 import { panel } from "../../styles";
-import { exercise0  } from "../../components/Exercises/Exercise0";
-import { exerciseIntro  } from "../../components/Exercises/ExerciseIntro";
-import { exercise1  } from "../../components/Exercises/Exercise1";
-import { exercise2  } from "../../components/Exercises/Exercise2";
-import { exercise3  } from "../../components/Exercises/Exercise3";
-import { exercise4  } from "../../components/Exercises/Exercise4";
+import { intro  } from "../../components/Exercises/Intro";
+import { landing  } from "../../components/Exercises/Landing";
+import { exercise as exercise1  } from "../../components/Exercises/Exercise1";
+import { exercise as exercise2  } from "../../components/Exercises/Exercise2";
+import { exercise as exercise3  } from "../../components/Exercises/Exercise3";
+import { exercise as exercise4  } from "../../components/Exercises/Exercise4";
+import { exercise as exercise5  } from "../../components/Exercises/Exercise5";
 import { pushHistory, replaceHistory } from "../../domain/route/command";
 import NavbarItem from "./NavbarItem";
 import { Subject } from "rxjs";
 
 const exercises = [
-  exercise0,
-  exerciseIntro,
+  landing,
+  intro,
   exercise1,
   exercise2,
   exercise3,
   exercise4,
+  exercise5,
 ]
 
 export const complete$ = new Subject()
@@ -39,7 +41,7 @@ export default function Training ({ destruction$ }) {
   .subscribe(pathname => {
     // redirect "/training" to "/training/1"
     if (pathname === '/' || pathname === `/${Route.training}`) {
-      replaceHistory({ url: exercise0.path })
+      replaceHistory({ url: landing.path })
     }
     // set content to appropriate exercise
     exercises.some((exercise, index) => {
@@ -94,14 +96,24 @@ export default function Training ({ destruction$ }) {
   return (
     <div class={css`
       max-width: 800px;
-      width: 100%;
+      margin-left: 70px;
+      width: calc(100% - 70px);
     `}>
       <div class={css`
         display: flex;
         flex-direction: column;
       `}>
-        <nav class='blue' style='width: fit-content;'>
-          <ul id='nav-mobile'>
+        <nav class={cx('blue', css`
+          width: fit-content;
+          position: fixed;
+          left: 0px;
+          height: calc(100% - 64px);
+          overflow-y: auto;
+        `)}>
+          <ul id='nav-mobile' class={css`
+            display: flex;
+            flex-direction: column;
+          `}>
             {exercises.map(exercise => <NavbarItem destruction$={destruction$} path={exercise.path} title={exercise.title} />)}
           </ul>
         </nav>

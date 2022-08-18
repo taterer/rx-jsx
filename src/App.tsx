@@ -1,6 +1,6 @@
 import { css } from '@emotion/css'
 import { EMPTY } from 'rxjs'
-// import Navbar from './components/Navbar'
+import Navbar from './components/Navbar'
 import Router from './components/Router'
 
 export default function App () {
@@ -13,7 +13,7 @@ export default function App () {
       height: 100%;
       width: 100%;
     `}>
-      {/* <Navbar destruction$={EMPTY} /> */}
+      <Navbar destruction$={EMPTY} />
       <Router destruction$={EMPTY} />
     </div>
   )

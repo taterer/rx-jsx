@@ -1,13 +1,12 @@
-import { css } from "@emotion/css"
-import { from, interval, Subject, Subscription, timer } from "rxjs"
-import { scan, takeUntil, withLatestFrom, concatMap } from "rxjs/operators"
+import { interval, Subject, Subscription } from "rxjs"
+import { share, takeUntil } from "rxjs/operators"
 import { tag } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route"
-import { toElement$, _withAnimationFrame_ } from "../../jsx"
+import { toElement$ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
 const title = '3'
-const path = `/${Route.training}/3`
+const path = `/${Route.training}/${title}`
 
 const animationTransform = [
   { transform: 'scale(2)' },
@@ -21,33 +20,17 @@ const animationTiming = {
 
 export default function Exercise ({ destruction$ }) {
   let success
-
-  const [subElement$] = toElement$(destruction$);
+  const event$ = new Subject()
   const [threeSecond$] = toElement$(destruction$)
   const interval$ = interval(animationTiming.duration)
-  const subscription$ = new Subject<Subscription>();
-  const subscriptions$ = subscription$
+  const subscriptions: Subscription[] = []
+  const sharedInterval$ = interval$
   .pipe(
-    scan((acc, subscription) => {
-      acc.push(subscription)
-      return acc
-    }, [] as Subscription[])
+    tag({ name: `Exercise ${title} Shared`, color: 'green' }),
+    share()
   )
-
-  subscription$
-  .pipe(
-    withLatestFrom(subElement$),
-    takeUntil(destruction$)
-  )
-  .subscribe(([subscription, subElement]) => {
-    subElement.appendChild(<div
-      disabled
-      class='waves-effect waves-light btn red'
-      onclick={function () {
-      }}>
-      Unsubscribe
-    </div>)
-  })
+  const subscription = undefined // create a new subscription of the sharedInterval$ observable
+  // EG: sharedInterval$.subscribe()
 
   threeSecond$
   .pipe(
@@ -60,91 +43,67 @@ export default function Exercise ({ destruction$ }) {
   // success checker
   interval$
   .pipe(
-    withLatestFrom(subscriptions$),
     takeUntil(destruction$)
   )
-  .subscribe(([_, subscriptions]) => {
-    if (!success && subscriptions.length > 1 && subscriptions.every(i => i.closed)) {
+  .subscribe(() => {
+    if (!success && subscription && subscriptions.length) {
       complete$.next(undefined)
       success = true
     }
   })
 
-  const destructionStream$ = new Subject()
-
-  destructionStream$
-  .pipe(
-    withLatestFrom(subElement$),
-    tag({ name: 'Exercise 3 Destruction', color: 'red' }),
-    takeUntil(destruction$)
-  )
-  .subscribe(([_, subElement]) => {
-    while (subElement.firstChild) {
-      subElement.removeChild(subElement.firstChild)
-    }
-  })
-
-  // example array that self completes
-  subscription$.next(
-    from([1, 2, 3, 4, 5])
-    .pipe(
-      concatMap(() => timer(1000)), // slow it down so we can see it separated in the timeline
-      tag({ name: 'Exercise 3 Self Cleaning', color: 'blue' })
-    )
-    .subscribe()
-  )
-
-  subscription$.next(
-    interval$
-    .pipe(
-      tag({ name: 'Exercise 3 Subscription', color: 'green' }),
-      /* 
-        Take until should go here
-      */              
-    )
-    .subscribe()
-  )
-
   return (
     <div>
       <h3>Exercise {title}</h3>
-      Another way to clean up subscriptions (my preferred) is to use takeUntil().
-      <br />
-      <br />
-      Some observables will clean themselves up. Subscriptions will clean themselves up whenever the observable emits "complete." Which never happens with an interval, but other things like from([1,2,3]) would complete immediately after emitting each item in the array. Or of(fetch(...)) would complete when the fetch promise resolves.
-      <br />
-      <br />
-      One more example of a self completing subscription is with the "take()" operator. It will complete once the subscription receives the supplied number of emissions.
+      When you create a pipe, it's easy to forget to subscribe. The pipe will be created, but no events will actually be processed until you subscribe.
       <br />
       <br />
       <div>
         <i element$={threeSecond$} class="material-icons dp48">timer_3</i>
       </div>
       <br />
-      <br />
-      When each subscription is setup with takeUntil, it will unsubscribe and clean up whenever the observable inside takeUntil emits.
-      <br />
-      <br />
-      <div element$={subElement$} class={css`
-        display: flex;
-        flex-direction: column;
-      `} />
+      Not only will no events be handled, the event emitter itself will not be created. This animation is deceiving, because nothing is being emitted. An interval is created when you click subscribe.
       <br />
       <br />
-      Modify the code to takeUntil destructionStream$ emits. Note: the UI elements will be removed when you click Emit Destruction, but that doesn't necessarily mean the underlying subscriptions are completed.
+      See what happens when you click subscribe multiple times.
+      <br />
       <br />
       <div
-        class='waves-effect waves-light btn red'
+        class='waves-effect waves-light btn green'
         onclick={() => {
-          destructionStream$.next(undefined)
+          subscriptions.push(
+            interval$ // change this to sharedInterval$
+            .pipe(
+              tag({ name: `Exercise ${title} Subscription`, color: 'green' })
+            )
+            .subscribe(i => event$.next(undefined))
+          )
         }}>
-        Emit Destruction
+        Subscribe
       </div>
+      <br />
+      <br />
+      The messages are not in sync with each other, or the animation which began when the component mounted, since they are all on their own 3 second intervals.
+      <br />
+      <br />
+      Let's sync them all with the animation. Change the subscription from using "interval$" to "sharedInterval$" and then double click on Subscribe again.
+      <br />
+      <br />
+      The sharedInterval$ uses "share()" in its pipe, which means it will not create a new interval for each subscription, but use the same underlying observable. This is the same behaviour you see with subjects: multicast.
+      <br />
+      <br />
+      This got us most of the way there, but it's still not in sync with the animation. As a simple exercise, let's keep it simple, and just subscribe immediately, so the interval matches the animation. Create a subscription to sharedInterval$ when we create the "subscription" const.
+      <br />
+      <br />
+      Ahh, it's much nicer when things line up.
+      <br />
+      <br />
+      Unless you skipped changing the interval$ to sharedInterval$, but that's fine. Let's move onto the next exercise.
     </div>
   )
 }
 
-export const exercise3 = {
+export const exercise = {
   Exercise,
   path,
   title
