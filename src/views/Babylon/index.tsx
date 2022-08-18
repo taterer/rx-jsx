@@ -9,6 +9,7 @@ import {
   takeUntil,
   withLatestFrom
 } from 'rxjs'
+import { Icon, tag } from "@taterer/rxjs-debugger";
 import { toElement$, _withAnimationFrame_ } from '../../jsx'
 import { assets, assetY, observableFromName } from '../../domain/3d/assets';
 import { player$, localPlayer$, npcPlayer$, Player, addPlayer } from '../../domain/3d/player';
@@ -109,7 +110,8 @@ export default function Babylon ({ destruction$ }) {
   const closestUnitAsset$ = closestUnit$
   .pipe(
     filter(closestUnit => observableFromName(closestUnit.fileName)),
-    switchMap<any, [File]>(closestUnit => observableFromName(closestUnit.fileName))
+    switchMap<any, [File]>(closestUnit => observableFromName(closestUnit.fileName)),
+    tag({ name: 'Closest Unit', color: 'blue', icon: Icon.hotel }),
   )
 
   // monitor([localPlayerUnitArray$, gayaUnitArray$])

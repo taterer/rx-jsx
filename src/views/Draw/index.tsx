@@ -13,6 +13,7 @@ import {
   switchMap,
   takeUntil
 } from 'rxjs/operators';
+import { Icon, tag } from "@taterer/rxjs-debugger";
 import { viewport$ } from '../../domain/viewport/query';
 import { mapToPersistable_, withIndexedDB_, concatMapPersist_, Tables, indexedDB$, Persistence } from '../../domain/persistence/repository';
 import { fromEventElement$, toElement$, _withAnimationFrame_ } from '../../jsx';
@@ -60,13 +61,14 @@ export default function Draw ({ destruction$ }) {
       let close = acc.stroke && !current.stroke
       return { ...current, begin, close }
     }, { x: 0, y: 0, stroke: false, begin: false, close: false }),
-    share()
+    share(),
   )
 
   stroke$
   .pipe(
     filter(stroke => !!stroke.stroke),
     combineLatestWith(canvasContext$),
+    tag({ name: 'Draw', color: 'black', icon: Icon.face }),
     takeUntil(destruction$),
   )
   .subscribe(([stroke, canvasContext]: any) => {
@@ -124,6 +126,7 @@ export default function Draw ({ destruction$ }) {
   fromEventElement$(clear$, 'click')
   .pipe(
     combineLatestWith(canvas$, canvasContext$, indexedDB$),
+    tag({ name: 'Clear', color: 'red' }),
     takeUntil(destruction$),
   )
   .subscribe(async ([_, canvas, canvasContext, db]: any) => {

@@ -2,7 +2,7 @@ import { EMPTY, fromEvent, map, Observable, of, switchMap, takeUntil, withLatest
 import { io } from 'socket.io-client';
 import { SOCKETS_ENABLED } from '../../config';
 
-const socket$ = SOCKETS_ENABLED === 'false' ? EMPTY : of(io('ws://localhost:3000'));
+const socket$ = SOCKETS_ENABLED === 'true' ? of(io('ws://localhost:3000')) : EMPTY;
 
 export const socketConnect$ = socket$
 .pipe(
