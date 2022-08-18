@@ -4,12 +4,15 @@ import {
   shareReplay,
   map,
   distinctUntilChanged,
-  share
+  share,
+  take
 } from 'rxjs/operators'
 import { BASE_URL } from '../../config'
 import { pushHistory$, replaceHistory$ } from './command'
 
-export const pathname$ = createPathnameStream()
+export const pathname$ = createPathnameStream().pipe(shareReplay(1))
+
+export const pathnameChange$ = createPathnameStream()
 
 export const _mapToFirstPath_ = map((pathname: string) => pathname.replace(BASE_URL, '').replace(/^\/\?/, '').replace(/^\/*([^/]*).*/g, '$1'))
 
@@ -32,7 +35,6 @@ export const secondPathChange$ = pathname$
 export function createPathnameStream () {
   const load$ = fromEvent(window, 'load')
   const popstate$ = fromEvent(window, 'popstate')
-
   return load$
   .pipe(
     mergeWith(popstate$),
@@ -43,6 +45,5 @@ export function createPathnameStream () {
         map(history => history.url)
       )
     ),
-    shareReplay(1)
   )
 }

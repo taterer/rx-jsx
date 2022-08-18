@@ -1,6 +1,7 @@
 import * as BABYLON from 'babylonjs';
-import { EMPTY, Observable, Subject, takeUntil } from 'rxjs';
+import { EMPTY, Observable, shareReplay, Subject, takeUntil } from 'rxjs';
 import { viewport$ } from '../viewport/query';
+import { addPlayingBoard } from './playingBoard';
 
 export const [scene$, mountScene] = sceneFactory(EMPTY)
 
@@ -9,7 +10,7 @@ function sceneFactory (destruction$: Observable<any>): [Observable<BABYLON.Scene
   const scene$ = new Subject<BABYLON.Scene>()
 
   return [
-    scene$.asObservable(),
+    scene$.asObservable().pipe(shareReplay(1)),
     (canvas: HTMLCanvasElement) => {
       const { engine, scene } = createScene(canvas)
 
@@ -53,7 +54,8 @@ function createScene (canvas: HTMLCanvasElement): { engine: BABYLON.Engine, scen
   
   // Create a built-in "ground" shape; its constructor takes 6 params : name, width, height, subdivision, scene, updatable
   // var ground = BABYLON.Mesh.CreateGround('ground1', 8, 8, 2, scene, false);
-  BABYLON.MeshBuilder.CreateGround('ground1', { width: 8, height: 12, subdivisions: 2 })
+  
+  addPlayingBoard()
 
   // Return the created scene
   return { engine, scene };

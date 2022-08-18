@@ -79,7 +79,7 @@ async function query (db, tableName, key?: string | object): Promise<object[]> {
     const objectStore = indexedDBObjectStore(db, tableName)
     const index = getIndex(key)
     let request
-    if (index) {
+    if (key && index) {
       request = objectStore.index(index).openCursor(IDBKeyRange.only(key[index]))
     } else {
       request = objectStore.openCursor(key)
@@ -87,7 +87,7 @@ async function query (db, tableName, key?: string | object): Promise<object[]> {
     request.onerror = event => {
       reject(new Error(`Indexed db objectStore getAll error. Tablename: ${tableName}. Event: ${JSON.stringify(event)}`))
     }
-    const res = []
+    const res: any[] = []
     request.onsuccess = event => {
       const cursor = event.target.result
       if (cursor) {

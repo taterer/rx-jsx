@@ -1,5 +1,6 @@
 import { css } from '@emotion/css'
 import { combineLatest, takeUntil } from 'rxjs'
+import { Icon, tag } from "@taterer/rxjs-debugger";
 import { toElement$, fromValueElementKeyup$ } from '../../jsx'
 import { panel } from '../../styles'
 
@@ -24,6 +25,7 @@ export default function Mortgage ({ destruction$ }) {
     fromValueElementKeyup$(term$),
   ])
   .pipe(
+    tag({ name: 'Mortgage Calculator', color: 'purple', icon: Icon.image }),
     takeUntil(destruction$)
   )
   .subscribe({
