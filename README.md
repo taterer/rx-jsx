@@ -1,16 +1,16 @@
 # Rx-JSX
-Basic example for using JSX with RxJS without React
+A familiar way to develop a front end using JSX without React. Prop drilling and lifecycle events are all replaced with a new RxJS engine.
 
-With a basic router implementation
+This example includes a basic router implementation
 
 # Getting started
 Install dependencies with `yarn`
 
 Start the app with `yarn start`
 
-For collaborative drawing using sockets, also start the server with `yarn start:server`
+For collaborative drawing using sockets, also start the server with `yarn start:server` and set SOCKETS_ENABLED=true in a `.env` file.
 
-# RxJS training
+# Learn RxJS
 Open the site in the browser to see the instructions for the exercises. Each exercise will require code changes, which should be done within the src directory of this repository.
 
 # Theory
@@ -19,9 +19,8 @@ I thought it would be interesting to try using JSX without React, and try to bas
 ## Domain Driven Design; Event-Sourcing; CQRS; Reactive
 ### Separate commands and queries
 #### The only way to make changes to anything that might ever be persisted should be through a command in the command file of the corresponding domain directory.
-#### The only pipes from command observables should be queries in the adjacent query file.
+#### The only pipes from command observables should be queries in the adjacent event file.
 #### The only subscriptions should be in the application; components and views.
-#### Queries should never invoke commands.
 #### Commands and queries should have no side effects,
 they should only supply the pipes to do useful things,
 it is left to the application to actually do stuff (declarative).
