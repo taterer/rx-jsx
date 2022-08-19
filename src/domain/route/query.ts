@@ -5,7 +5,6 @@ import {
   map,
   distinctUntilChanged,
   share,
-  tap
 } from 'rxjs/operators'
 import { BASE_URL } from '../../config'
 import { pushHistory$, replaceHistory$ } from './command'
@@ -45,6 +44,6 @@ export function createPathnameStream () {
         map(history => history.url)
       )
     ),
-    map(url => url.replace(BASE_URL, '').replace(/^\/*\?*\/*/, ''))
+    map(url => `/${url.replace(BASE_URL, '').replace(/^\/*\?*\/*/, '')}`),
   )
 }

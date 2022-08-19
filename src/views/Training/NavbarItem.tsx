@@ -23,7 +23,18 @@ export default function NavbarItem ({ destruction$, title, path }) {
 
   return (
     <li element$={navbarItem$}>
-      <a class='waves-effect waves-light' style="width: 100%; text-align: center;" onClick={() => pushHistory({ url: path })}>{title}</a>
+      <a
+        class='waves-effect waves-light'
+        style="width: 100%; text-align: center;"
+        href={path}
+        onClick={event => {
+          if (!event.ctrlKey) {
+            pushHistory({ url: path })
+            event.preventDefault()
+          }
+        }}>
+          {title}
+        </a>
     </li>
   )
 }
