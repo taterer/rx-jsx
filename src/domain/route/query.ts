@@ -5,7 +5,7 @@ import {
   map,
   distinctUntilChanged,
   share,
-  take
+  tap
 } from 'rxjs/operators'
 import { BASE_URL } from '../../config'
 import { pushHistory$, replaceHistory$ } from './command'
@@ -14,7 +14,7 @@ export const pathname$ = createPathnameStream().pipe(shareReplay(1))
 
 export const pathnameChange$ = createPathnameStream()
 
-export const _mapToFirstPath_ = map((pathname: string) => pathname.replace(BASE_URL, '').replace(/^\/\?/, '').replace(/^\/*([^/]*).*/g, '$1'))
+export const _mapToFirstPath_ = map((pathname: string) => pathname.replace(/^\/*([^/]*).*/g, '$1'))
 
 export const firstPathChange$ = pathname$
 .pipe(
@@ -23,7 +23,7 @@ export const firstPathChange$ = pathname$
   share()
 )
 
-export const _mapToSecondPath_ = map((pathname: string) => pathname.replace(BASE_URL, '').replace(/^\/\?/, '').replace(/^\/*[^/]*\/*/g, ''))
+export const _mapToSecondPath_ = map((pathname: string) => pathname.replace(/^\/*[^/]*\/*/g, ''))
 
 export const secondPathChange$ = pathname$
 .pipe(
@@ -38,7 +38,7 @@ export function createPathnameStream () {
   return load$
   .pipe(
     mergeWith(popstate$),
-    map((event: any) => event.target.location.pathname),
+    map((event: any) => event.target.location.pathname.replace(BASE_URL, '').replace(/^\/*\?*\/*/, '')),
     mergeWith(
       merge(pushHistory$, replaceHistory$)
       .pipe(
