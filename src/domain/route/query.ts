@@ -38,12 +38,13 @@ export function createPathnameStream () {
   return load$
   .pipe(
     mergeWith(popstate$),
-    map((event: any) => event.target.location.pathname.replace(BASE_URL, '').replace(/^\/*\?*\/*/, '')),
+    map((event: any) => event.target.location.pathname),
     mergeWith(
       merge(pushHistory$, replaceHistory$)
       .pipe(
         map(history => history.url)
       )
     ),
+    map(url => url.replace(BASE_URL, '').replace(/^\/*\?*\/*/, ''))
   )
 }
