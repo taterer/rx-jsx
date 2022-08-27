@@ -1,31 +1,51 @@
 import {
   animationFrameScheduler,
   fromEvent,
+  map,
   Observable,
   OperatorFunction,
   pluck,
+  scan,
   startWith,
-  Subject,
   switchMap,
-  takeUntil,
-  withLatestFrom
 } from 'rxjs';
+
+export type HTMLDestroyElement = HTMLElement & { destroy: Function }
 
 // Critical JSX replacement
 
-(window as any).createElement = (tag, props, ...children) => {
+(window as any).rxjsx = (tag, props, ...children) => {
   if (typeof tag === 'function') return tag(props, ...children);
   const element = document.createElement(tag);
 
   Object.entries(props || {}).forEach(([name, value]: [string, any]) => {
     if (name.startsWith('on') && name.toLowerCase() in window) {
       element.addEventListener(name.toLowerCase().substr(2), value);
-    }
-    else if (name === 'element$') {
-      const observable = value
-      if (observable && observable.next && typeof observable.next === 'function') {
-        observable.next(element)
-      }
+    } else if (name === 'single$') {
+      const observable = value.pipe(
+        scan((acc, current) => {
+          if (acc) {
+            element.removeChild(acc)
+          }
+          if (current) {
+            element.appendChild(current)
+          }
+          return current
+        }, undefined)
+      )
+      element.destroy = () => observable.complete()
+      observable.subscribe({ complete: () => element.remove() })
+    } else if (name === 'multi$') {
+      const observable = value.pipe(
+        map(current => {
+          if (current) {
+            element.appendChild(current)
+          }
+          return current
+        })
+      )
+      element.destroy = () => observable.complete()
+      observable.subscribe({ complete: () => element.remove() })
     } else {
       element.setAttribute(name, value.toString());
     }
@@ -47,26 +67,7 @@ const appendChild = (parent, child) => {
 
 // Helper functions
 
-export function toElement$ (destruction$): [Subject<Element>, ((next: any) => void)] {
-  const element$ = new Subject<Element>()
-  const elementQueue$ = new Subject<Element>()
-
-  elementQueue$
-  .pipe(
-    withLatestFrom(element$),
-    takeUntil(destruction$)
-  )
-  .subscribe({
-    next: ([toBe, current]) => {
-      current.replaceWith(toBe)
-      element$.next(toBe)
-    }
-  })
-
-  return [element$, i => elementQueue$.next(i)]
-}
-
-export const _withAnimationFrame_: OperatorFunction<any, any> = switchMap(async (value) => {
+export const withAnimationFrame: OperatorFunction<any, any> = switchMap(async (value) => {
   return await new Promise(resolve => {
     animationFrameScheduler.schedule(() => {
       resolve(value)
@@ -81,7 +82,7 @@ export function fromEventElement$ (target$: Observable<Element>, eventName: stri
   )
 }
 
-export function fromValueElementKeyup$(target$: Subject<Element>, defaultValue?: string) {
+export function fromValueElementKeyup$(target$: Observable<Element>, defaultValue?: string): Observable<string> {
   return target$
   .pipe(
     switchMap<Element, Observable<string>>(target => fromEvent<any>(target, 'keyup').pipe(pluck('target', 'value'))),
@@ -89,7 +90,7 @@ export function fromValueElementKeyup$(target$: Subject<Element>, defaultValue?:
   )
 }
 
-export function classSync (target: Element, classToSync: string, shouldHaveClass: boolean) {
+export function classSync (target: Element, classToSync: string, shouldHaveClass: boolean): void {
   if (shouldHaveClass) {
     target.classList.add(classToSync)
   } else {

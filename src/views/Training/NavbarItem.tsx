@@ -1,10 +1,25 @@
-import { combineLatestWith, map, takeUntil } from 'rxjs'
-import { classSync, toElement$ } from '../../jsx'
+import { combineLatestWith, of, takeUntil } from 'rxjs'
+import { classSync } from '@taterer/rx-jsx'
 import { pushHistory } from '../../domain/route/command';
 import { pathname$ } from '../../domain/route/query';
 
 export default function NavbarItem ({ destruction$, title, path }) {
-  const [navbarItem$] = toElement$(destruction$)
+  const navbarItem$ = of<Element>(
+    <li style='width: 100%;'>
+      <a
+        class='waves-effect waves-light'
+        style='width: 100%; text-align: center;'
+        href={path}
+        onClick={event => {
+          if (!event.ctrlKey) {
+            pushHistory({ url: path })
+            event.preventDefault()
+          }
+        }}>
+          {title}
+        </a>
+    </li>
+  )
 
   pathname$
   .pipe(
@@ -22,19 +37,6 @@ export default function NavbarItem ({ destruction$, title, path }) {
   })
 
   return (
-    <li element$={navbarItem$}>
-      <a
-        class='waves-effect waves-light'
-        style="width: 100%; text-align: center;"
-        href={path}
-        onClick={event => {
-          if (!event.ctrlKey) {
-            pushHistory({ url: path })
-            event.preventDefault()
-          }
-        }}>
-          {title}
-        </a>
-    </li>
+    <div single$={navbarItem$} />
   )
 }

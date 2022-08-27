@@ -1,5 +1,5 @@
 import { css } from '@emotion/css';
-import { from } from 'rxjs';
+import { from, of, Subject } from 'rxjs';
 import {
   combineLatestWith,
   concatMap,
@@ -16,15 +16,24 @@ import {
 import { Icon, tag } from "@taterer/rxjs-debugger";
 import { viewport$ } from '../../domain/viewport/query';
 import { mapToPersistable_, withIndexedDB_, concatMapPersist_, Tables, indexedDB$, Persistence } from '../../domain/persistence/repository';
-import { fromEventElement$, toElement$, _withAnimationFrame_ } from '../../jsx';
+import { fromEventElement$, withAnimationFrame } from '@taterer/rx-jsx';
 import { panel } from '../../styles';
 import { socketDraw$, subscribeAndPushToChannel } from '../../domain/sync/sockets';
 import { draw } from '../../domain/2d/canvas';
 
 export default function Draw ({ destruction$ }) {
-  const [canvas$] = toElement$(destruction$)
-  const [clear$] = toElement$(destruction$)
-  const [pending$, setPending] = toElement$(destruction$)
+  const canvas$ = of<Element>(
+    <canvas
+      class={css`
+        background-color: #eee;
+      `}
+      width={750}
+      height={750} />
+  )
+
+  const clear$ = of<Element>(
+    <a class='btn blue waves-effect waves-light right'>Clear</a>
+  )
 
   const canvasContext$ = canvas$
   .pipe(
@@ -34,7 +43,7 @@ export default function Draw ({ destruction$ }) {
   
   const offset$ = viewport$
   .pipe(
-    _withAnimationFrame_,
+    withAnimationFrame,
     combineLatestWith(canvas$),
     map(([_, canvas]) => {
       const boundingClientRect = canvas.getBoundingClientRect()
@@ -123,6 +132,25 @@ export default function Draw ({ destruction$ }) {
     draw(canvasContext, stroke)
   })
 
+  const clearing$ = new Subject()
+
+  const pending$ = clearing$
+  .pipe(
+    map(clearing => {
+      if (clearing) {
+        return (
+          <h1 class={css`
+            position: absolute;
+            margin: 220px;
+          `}>
+            Clearing ...
+          </h1>
+        )
+      }
+    }),
+    takeUntil(destruction$)
+  )
+
   fromEventElement$(clear$, 'click')
   .pipe(
     combineLatestWith(canvas$, canvasContext$, indexedDB$),
@@ -130,28 +158,18 @@ export default function Draw ({ destruction$ }) {
     takeUntil(destruction$),
   )
   .subscribe(async ([_, canvas, canvasContext, db]: any) => {
-    setPending(<h1 class={css`
-      position: absolute;
-      margin: 220px;
-    `}>
-      Clearing ...
-    </h1>)
+    clearing$.next(true)
     canvasContext.clearRect(0, 0, canvas.width, canvas.height)
     const strokes = await db.query(Tables.strokes)
     await Promise.all(strokes.map((stroke: any) => db.remove(Tables.strokes, stroke.id)))
-    setPending(<div />)
+    clearing$.next(false)
   })
 
   // End persistence
 
   return <div class={panel}>
-    <div element$={pending$} />
-    <canvas element$={canvas$}
-      class={css`
-        background-color: #eee;
-      `}
-      width={750}
-      height={750} />
-    <a class='btn blue waves-effect waves-light right' element$={clear$}>Clear</a>
+    <div single$={pending$} />
+    <div single$={canvas$} />
+    <div single={clear$} />
   </div>
 }

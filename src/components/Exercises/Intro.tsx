@@ -1,14 +1,23 @@
-import { Subject, takeUntil } from "rxjs"
+import { fromEvent, of, Subject, switchMap, takeUntil } from "rxjs"
 import { tag, Icon } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route"
-import { toElement$ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
 const title = 'Intro'
 const path = `/${Route.training}/intro`
 
 export default function Exercise ({ destruction$ }) {
-  const [blueButton$] = toElement$(destruction$)
+  const blueButton$ = of(
+    <div class='waves-effect waves-light btn blue'>BLUE</div>
+  )
+
+  const blueButtonClick = blueButton$
+  .pipe(
+    switchMap(blueButton => fromEvent(blueButton, 'click')),
+    takeUntil(destruction$)
+  )
+
+  blueButtonClick.subscribe(() => blue$.next(undefined))
 
   const red$ = new Subject()
   const blue$ = new Subject()
@@ -50,11 +59,7 @@ export default function Exercise ({ destruction$ }) {
           onclick={() => red$.next(undefined)}>
           Red
         </div>
-        <div element$={blueButton$}
-          class='waves-effect waves-light btn blue'
-          onclick={() => blue$.next(undefined)}>
-          Blue
-        </div>
+        <span single$={blueButton$}></span>
         <br />
         <br />
         In order to move to the next exercise, the requirements presented by the exercise must be met. There will be comments in the code indicating where the changes should be made. When the requirements are are met you will see a golden star in the timeline.
@@ -62,8 +67,7 @@ export default function Exercise ({ destruction$ }) {
         <br />
         Click on the star button to move on to the first exercise.
         <br />
-        <div element$={blueButton$}
-          class='waves-effect waves-light btn orange'
+        <div class='waves-effect waves-light btn orange'
           onclick={() => complete$.next(undefined)}>
           Star
         </div>

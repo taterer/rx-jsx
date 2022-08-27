@@ -1,7 +1,7 @@
 import { css } from '@emotion/css'
-import { combineLatest, takeUntil } from 'rxjs'
+import { of, map, startWith, takeUntil, combineLatest } from 'rxjs'
 import { Icon, tag } from "@taterer/rxjs-debugger";
-import { toElement$, fromValueElementKeyup$ } from '../../jsx'
+import { fromValueElementKeyup$ } from '@taterer/rx-jsx'
 import { panel } from '../../styles'
 
 const lineItemClass = css`max-width: 400px;`
@@ -14,33 +14,32 @@ function toDollar (str: number) {
 }
 
 export default function Mortgage ({ destruction$ }) {
-  const [principal$] = toElement$(destruction$)
-  const [interest$] = toElement$(destruction$)
-  const [term$] = toElement$(destruction$)
-  const [results$, setResult] = toElement$(destruction$)
+  const principal$ = of<Element>(<input id='principal' placeholder='0' />)
+  const interest$ = of<Element>(<input id='interest' placeholder='0' />)
+  const term$ = of<Element>(<input id='term' placeholder='0' />)
 
-  combineLatest([
+  const result$ = combineLatest(
     fromValueElementKeyup$(principal$),
     fromValueElementKeyup$(interest$),
     fromValueElementKeyup$(term$),
-  ])
+  )
   .pipe(
     tag({ name: 'Mortgage Calculator', color: 'purple', icon: Icon.image }),
-    takeUntil(destruction$)
-  )
-  .subscribe({
-    next: ([principal, interest, term]) => {
+    map(([principal, interest, term]) => {
+      if (!principal || !interest || !term) {
+        return <div>TBD</div>
+      }
       try {
         const p = parseFloat(principal as string)
         const i = parseFloat(interest as string)/100
         const t = parseFloat(term as string)
         const result = p*i/12/(1-Math.pow(1+i/12,-t*12))
-        setResult(<div>{isNaN(result) ? 'TBD' : toDollar(result)}</div>)
-      } catch (err) {
-        setResult(<div>Err</div>)
-      }
-    }
-  })
+        return <div>{isNaN(result) ? 'Err' : toDollar(result)}</div>
+      } catch (err) {}
+      return <div>Err</div>
+    }),
+    takeUntil(destruction$)
+  )
 
   return (
     <div class={panel}>
@@ -48,15 +47,15 @@ export default function Mortgage ({ destruction$ }) {
       <div>
         <div class={lineItemClass}>
           <label for='principal'>Principal</label>
-          <input id='principal' element$={principal$} placeholder='0' />
+          <div single$={principal$} />
         </div>
         <div class={lineItemClass}>
           <label for='interest'>Interest</label>
-          <input id='interest' element$={interest$} placeholder='0' />
+          <div single$={interest$} />
         </div>
         <div class={lineItemClass}>
           <label for='term'>Term (years)</label>
-          <input id='term' element$={term$} placeholder='0' />
+          <div single$={term$} />
         </div>
         <div class={css`
           display: flex;
@@ -65,9 +64,7 @@ export default function Mortgage ({ destruction$ }) {
           margin: 20px;
         `}>
           <div>Monthly Payment:&nbsp;</div>
-          <div element$={results$}>
-            TBD
-          </div>
+          <div single$={result$.pipe(startWith(<div>TBD</div>))} />
         </div>
       </div>
     </div>

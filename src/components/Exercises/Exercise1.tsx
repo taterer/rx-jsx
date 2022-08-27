@@ -1,14 +1,20 @@
 import { tag } from "@taterer/rxjs-debugger"
-import { fromEvent, Observable, takeUntil } from "rxjs"
+import {
+  fromEvent,
+  Observable,
+  of,
+  takeUntil
+} from "rxjs"
 import { Route } from "../../domain/route"
-import { toElement$ } from "../../jsx"
-import { complete$ } from "../../views/Training"
+import { complete$, ExerciseModule } from "../../views/Training"
 
 const title = '1'
 const path = `/${Route.training}/${title}`
 
 export default function Exercise ({ destruction$ }) {
-  const [button$] = toElement$(destruction$) // this will give us an observable, which will contain the element once it is mounted to the dom
+  const button$ = of(
+    <div class='btn green'>BUTTON</div>
+  )
 
   button$
   .pipe(
@@ -46,10 +52,7 @@ export default function Exercise ({ destruction$ }) {
         Let's create an observable. In src/components/Exercises/Exercise1.tsx file update the code to create an observable for clicks on the button below.
         <br />
         <br />
-        <div
-          class='btn green'
-          element$={button$} // FYI this is where the rx-jsx library comes in, it will look for element$ and push through newly mounted elements with this tag using the provided subject
-          >BUTTON</div>
+        <div single$={button$} />{/* FYI this is where the rx-jsx library comes in, it will look for single$ (and multi$), subscribe to the observable, and mount the latest inside of this element (or append only for multi) */}
         <br />
         <br />
         Once we have an observable, we can subscribe to the events, combine the events with others, and create the flow for our application.
@@ -65,7 +68,7 @@ export default function Exercise ({ destruction$ }) {
   )
 }
 
-export const exercise = {
+export const exercise: ExerciseModule = {
   Exercise,
   path,
   title

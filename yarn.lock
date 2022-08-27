@@ -1125,12 +1125,18 @@
   dependencies:
     tslib "^2.4.0"
 
-"@taterer/rxjs-debugger@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@taterer/rxjs-debugger/-/rxjs-debugger-1.0.5.tgz#42cdb012d4bfd00e5baf9f48fc0d3b5436059511"
-  integrity sha512-EwVziNwKZ6rUmw14xvn2ylzL69rNOE4EOUUgAfCCkpkLELkYm8hPTMgvT8cTUhi3xiGB8PFe3h37/F3jk2AvWw==
+"@taterer/rx-jsx@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@taterer/rx-jsx/-/rx-jsx-1.0.2.tgz#82d3625eb91eb2c39888b2b298b45b7680141540"
+  integrity sha512-Me6okVFJ3Qq0cT+XHH5NUAalK/HoxaHeiAOyQPAr+jeH5UVzvoOT02v5X9ke9kuyYBFjlQd5VAja7OSWDRjoZw==
+
+"@taterer/rxjs-debugger@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@taterer/rxjs-debugger/-/rxjs-debugger-1.1.1.tgz#bd947f9471a69b0f30c8f061973ffb95e8f95c5a"
+  integrity sha512-zFg2+0aDMpwUEfaH1nLwqCsoPczz9iR0eUOtRVahqNqVwpWbmafhTmG59J6YEjCuOBtNHZcvofznofQOiUG0yA==
   dependencies:
     "@emotion/css" "^11.9.0"
+    "@taterer/rx-jsx" "^1.0.2"
     uuid "^8.3.2"
 
 "@trysound/sax@0.2.0":

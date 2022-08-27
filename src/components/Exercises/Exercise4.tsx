@@ -1,9 +1,8 @@
 import { css } from "@emotion/css"
-import { interval, Subject, Subscription } from "rxjs"
-import { scan, takeUntil, withLatestFrom } from "rxjs/operators"
+import { interval, of, Subject, Subscription } from "rxjs"
+import { map, scan, takeUntil, withLatestFrom } from "rxjs/operators"
 import { tag } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route"
-import { toElement$ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
 const title = '4'
@@ -21,8 +20,9 @@ const animationTiming = {
 
 export default function Exercise ({ destruction$ }) {
   let success
-  const [subElement$] = toElement$(destruction$);
-  const [threeSecond$] = toElement$(destruction$)
+  const threeSecond$ = of(
+    <i class="material-icons dp48">timer_3</i>
+  )
   const interval$ = interval(animationTiming.duration)
   const subscription$ = new Subject<Subscription>();
   const subscriptions$ = subscription$
@@ -33,13 +33,9 @@ export default function Exercise ({ destruction$ }) {
     }, [] as Subscription[])
   )
 
-  subscription$
+  const unsubscribe$ = subscription$
   .pipe(
-    withLatestFrom(subElement$),
-    takeUntil(destruction$)
-  )
-  .subscribe(([subscription, subElelement]) => {
-    subElelement.appendChild(<div
+    map(subscription => <div
       class='waves-effect waves-light btn red'
       onclick={function () {
         /*
@@ -50,8 +46,9 @@ export default function Exercise ({ destruction$ }) {
         // this.remove() // optionally remove the unsubscribe element
       }}>
       Unsubscribe
-    </div>)
-  })
+    </div>),
+    takeUntil(destruction$)
+  )
 
   threeSecond$
   .pipe(
@@ -83,9 +80,7 @@ export default function Exercise ({ destruction$ }) {
       It may be easy to forget to subscribe, but it's usually pretty straightforward to figure that out. How do you know if you forget to unsubscribe? Well, you might notice a memory leak. Let's find a better way.
       <br />
       <br />
-      <div>
-        <i element$={threeSecond$} class="material-icons dp48">timer_3</i>
-      </div>
+      <div single$={threeSecond$} />
       <br />
       Make a few subscribtions by clicking Subscribe (at least 2).
       <br />
@@ -110,7 +105,7 @@ export default function Exercise ({ destruction$ }) {
       Update the onclick handler for the Unsubscribe buttons to unsubscribe, and remove the element.
       <br />
       <br />
-      <div element$={subElement$} class={css`
+      <div multi$={unsubscribe$} class={css`
         display: flex;
         flex-direction: column;
       `} />

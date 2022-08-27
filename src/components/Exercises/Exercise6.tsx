@@ -1,12 +1,11 @@
 import { css } from "@emotion/css"
-import { from, interval, Subject, Subscription, timer } from "rxjs"
-import { scan, takeUntil, tap, withLatestFrom, concatMap } from "rxjs/operators"
+import { from, interval, of, Subject, Subscription, timer } from "rxjs"
+import { scan, takeUntil, withLatestFrom, concatMap, map } from "rxjs/operators"
 import { tag } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route"
-import { toElement$, _withAnimationFrame_ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
-const title = '6'
+const title = '5'
 const path = `/${Route.training}/${title}`
 
 const animationTransform = [
@@ -22,8 +21,9 @@ const animationTiming = {
 export default function Exercise ({ destruction$ }) {
   let success
 
-  const [subElement$] = toElement$(destruction$);
-  const [threeSecond$] = toElement$(destruction$)
+  const threeSecond$ = of(
+    <i class="material-icons dp48">timer_3</i>
+  )
   const interval$ = interval(animationTiming.duration)
   const subscription$ = new Subject<Subscription>();
   const subscriptions$ = subscription$
@@ -34,20 +34,17 @@ export default function Exercise ({ destruction$ }) {
     }, [] as Subscription[])
   )
 
-  subscription$
+  const unsubscribe$ = subscription$
   .pipe(
-    withLatestFrom(subElement$),
-    takeUntil(destruction$)
-  )
-  .subscribe(([subscription, subElement]) => {
-    subElement.appendChild(<div
+    map(() => <div
       disabled
       class='waves-effect waves-light btn red'
       onclick={function () {
       }}>
       Unsubscribe
-    </div>)
-  })
+    </div>),
+    takeUntil(destruction$)
+  )
 
   threeSecond$
   .pipe(
@@ -72,24 +69,12 @@ export default function Exercise ({ destruction$ }) {
 
   const destructionStream$ = new Subject()
 
-  destructionStream$
-  .pipe(
-    withLatestFrom(subElement$),
-    tag({ name: `Exercise ${title} Destruction`, color: 'red' }),
-    takeUntil(destruction$)
-  )
-  .subscribe(([_, subElement]) => {
-    while (subElement.firstChild) {
-      subElement.removeChild(subElement.firstChild)
-    }
-  })
-
   // example array that self completes
   subscription$.next(
     from([1, 2, 3, 4, 5])
     .pipe(
       concatMap(() => timer(1000)), // slow it down so we can see it separated in the timeline
-      tag({ name: `Exercise ${title} Self Cleaning`, color: 'green' })
+      tag({ name: `Exercise ${title} Self Cleaning`, color: 'blue' })
     )
     .subscribe()
   )
@@ -98,7 +83,9 @@ export default function Exercise ({ destruction$ }) {
     interval$
     .pipe(
       tag({ name: `Exercise ${title} Subscription`, color: 'green' }),
-      takeUntil(destructionStream$)           
+      /*
+        Take until should go here
+      */
     )
     .subscribe()
   )
@@ -115,21 +102,19 @@ export default function Exercise ({ destruction$ }) {
       One more example of a self completing subscription is with the "take()" operator. It will complete once the subscription receives the supplied number of emissions.
       <br />
       <br />
-      <div>
-        <i element$={threeSecond$} class="material-icons dp48">timer_3</i>
-      </div>
+      <div single$={threeSecond$} />
       <br />
       <br />
       When each subscription is setup with takeUntil, it will unsubscribe and clean up whenever the observable inside takeUntil emits.
       <br />
       <br />
-      <div element$={subElement$} class={css`
+      <div multi$={unsubscribe$} class={css`
         display: flex;
         flex-direction: column;
       `} />
       <br />
       <br />
-      Modify the code to takeUntil destructionStream$ emits. Note: the UI elements will be removed when you click Emit Destruction, but that doesn't necessarily mean the underlying subscriptions are completed.
+      Modify the code to takeUntil destructionStream$ emits.
       <br />
       <div
         class='waves-effect waves-light btn red'

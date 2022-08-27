@@ -1,8 +1,7 @@
-import { interval, Subject, Subscription } from "rxjs"
+import { interval, of, Subject, Subscription } from "rxjs"
 import { share, takeUntil } from "rxjs/operators"
 import { tag } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route"
-import { toElement$ } from "../../jsx"
 import { complete$ } from "../../views/Training"
 
 const title = '3'
@@ -21,7 +20,9 @@ const animationTiming = {
 export default function Exercise ({ destruction$ }) {
   let success
   const event$ = new Subject()
-  const [threeSecond$] = toElement$(destruction$)
+  const threeSecond$ = of(
+    <i class="material-icons dp48">timer_3</i>
+  )
   const interval$ = interval(animationTiming.duration)
   const subscriptions: Subscription[] = []
   const sharedInterval$ = interval$
@@ -58,9 +59,7 @@ export default function Exercise ({ destruction$ }) {
       When you create a pipe, it's easy to forget to subscribe. The pipe will be created, but no events will actually be processed until you subscribe.
       <br />
       <br />
-      <div>
-        <i element$={threeSecond$} class="material-icons dp48">timer_3</i>
-      </div>
+      <div single$={threeSecond$} />
       <br />
       Not only will no events be handled, the event emitter itself will not be created. This animation is deceiving, because nothing is being emitted. An interval is created when you click subscribe.
       <br />

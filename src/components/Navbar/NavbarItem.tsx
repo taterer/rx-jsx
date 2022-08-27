@@ -1,11 +1,20 @@
-import { takeUntil, withLatestFrom } from 'rxjs'
-import { classSync, toElement$ } from '../../jsx'
+import { of, takeUntil, withLatestFrom } from 'rxjs'
+import { classSync } from '@taterer/rx-jsx'
 import { pushHistory } from '../../domain/route/command';
 import { firstPathChange$ } from '../../domain/route/query';
 import { RouteRegExp } from '../../domain/route';
 
 export default function NavbarItem ({ destruction$, title, path }) {
-  const [navbarItem$] = toElement$(destruction$)
+  const navbarItem$ = of<Element>(
+    <li>
+      <a class='waves-effect waves-light' href={`/${path}`} onClick={event => {
+        if (!event.ctrlKey) {
+          pushHistory({ url: `/${path}` })
+          event.preventDefault()
+        }
+      }}>{title}</a>
+    </li>
+  )
 
   firstPathChange$
   .pipe(
@@ -25,13 +34,6 @@ export default function NavbarItem ({ destruction$, title, path }) {
   })
 
   return (
-    <li element$={navbarItem$}>
-      <a class='waves-effect waves-light' href={`/${path}`} onClick={event => {
-        if (!event.ctrlKey) {
-          pushHistory({ url: `/${path}` })
-          event.preventDefault()
-        }
-      }}>{title}</a>
-    </li>
+    <div single$={navbarItem$} />
   )
 }

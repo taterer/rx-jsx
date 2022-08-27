@@ -4,13 +4,14 @@ import {
   combineLatestWith,
   distinctUntilKeyChanged,
   filter,
+  of,
   map,
   switchMap,
   takeUntil,
   withLatestFrom
 } from 'rxjs'
 import { Icon, tag } from "@taterer/rxjs-debugger";
-import { toElement$, _withAnimationFrame_ } from '../../jsx'
+import { withAnimationFrame } from '@taterer/rx-jsx'
 import { assets, assetY, observableFromName } from '../../domain/3d/assets';
 import { player$, localPlayer$, npcPlayer$, Player, addPlayer } from '../../domain/3d/player';
 import { mountScene, scene$ } from '../../domain/3d/scene';
@@ -18,12 +19,17 @@ import { Unit, getClosestUnit } from '../../domain/3d/unit';
 import { pointerDown$, pointerMove$, pointerDrag$, pickGroundPosition } from '../../domain/3d/pointer';
 
 export default function Babylon ({ destruction$ }) {
-  const [canvas$] = toElement$(destruction$)
+  const canvas$ = of(
+    <canvas class={css`
+      height: 750px;
+      width: 550px;
+      `} />
+  )
 
   canvas$
   .pipe(
     takeUntil(destruction$),
-    _withAnimationFrame_,
+    withAnimationFrame,
   )
   .subscribe(mountScene)
 
@@ -175,9 +181,6 @@ export default function Babylon ({ destruction$ }) {
   // })
 
   return (
-    <canvas class={css`
-      height: 750px;
-      width: 550px;
-      `} element$={canvas$} />
+    <div single$={canvas$} />
   )
 }

@@ -6,13 +6,13 @@ import {
   switchMap,
 } from "rxjs";
 import { BASE_URL } from '../../config';
-import { _withAnimationFrame_ } from "../../jsx";
+import { withAnimationFrame } from "@taterer/rx-jsx";
 
 const aerobatic_plane$ = from(fetch(`${BASE_URL}/models/aerobatic_plane.glb`))
 .pipe(
   switchMap(response => response.arrayBuffer()),
   map(arrayBuffer => new File([arrayBuffer], "aerobatic_plane.glb")),
-  _withAnimationFrame_,
+  withAnimationFrame,
   shareReplay<File>(1)
 )
 
@@ -20,7 +20,7 @@ const shark$ = from(fetch(`${BASE_URL}/models/shark.glb`))
 .pipe(
   switchMap(response => response.arrayBuffer()),
   map(arrayBuffer => new File([arrayBuffer], "shark.glb")),
-  _withAnimationFrame_,
+  withAnimationFrame,
   shareReplay<File>(1)
 )
 

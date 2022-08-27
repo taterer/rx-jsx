@@ -1,9 +1,9 @@
 import { css, cx } from "@emotion/css";
-import { takeUntil, withLatestFrom } from "rxjs/operators";
+import { map, share, takeUntil, withLatestFrom } from "rxjs/operators";
 import { tag } from "@taterer/rxjs-debugger";
 import { Route } from "../../domain/route";
 import { pathname$, pathnameChange$ } from "../../domain/route/query";
-import { toElement$, _withAnimationFrame_ } from "../../jsx";
+import { withAnimationFrame } from "@taterer/rx-jsx";
 import { panel } from "../../styles";
 import { intro  } from "../../components/Exercises/Intro";
 import { landing  } from "../../components/Exercises/Landing";
@@ -14,9 +14,15 @@ import { exercise as exercise4  } from "../../components/Exercises/Exercise4";
 import { exercise as exercise5  } from "../../components/Exercises/Exercise5";
 import { pushHistory, replaceHistory } from "../../domain/route/command";
 import NavbarItem from "./NavbarItem";
-import { Subject } from "rxjs";
+import { Observable, Subject } from "rxjs";
 
-const exercises = [
+export interface ExerciseModule {
+  Exercise: Function
+  path: string,
+  title: string
+}
+
+const exercises: ExerciseModule[] = [
   landing,
   intro,
   exercise1,
@@ -29,13 +35,8 @@ const exercises = [
 export const complete$ = new Subject()
 
 export default function Training ({ destruction$ }) {
-  const [content$, setContent] = toElement$(destruction$)
-  const [back$, setBack] = toElement$(destruction$)
-  const [forward$, setForward] = toElement$(destruction$)
-
   pathname$
   .pipe(
-    _withAnimationFrame_,
     takeUntil(destruction$)
   )
   .subscribe(pathname => {
@@ -43,54 +44,77 @@ export default function Training ({ destruction$ }) {
     if (pathname === '/' || pathname === `/${Route.training}`) {
       replaceHistory({ url: landing.path })
     }
-    // set content to appropriate exercise
-    exercises.some((exercise, index) => {
-      if (exercise.path === pathname) {
-        setContent(<exercise.Exercise destruction$={pathnameChange$} />)
-        if (index > 0) {
-          setBack(
-            <div
-              onclick={() => pushHistory({ url: exercises[index - 1].path })}
-              class={cx('btn blue', css`
+  })
+
+  const activeExerciseIndex$: Observable<number> = pathname$
+  .pipe(
+    withAnimationFrame,
+    map(pathname => exercises.findIndex(exercise => exercise.path === pathname)),
+  )
+
+  const content$ = activeExerciseIndex$
+  .pipe(
+    map(index => {
+      const Exercise = exercises[index].Exercise
+      return <Exercise destruction$={pathnameChange$} />
+    }),
+    share(),
+    takeUntil(destruction$)
+  )
+
+  const back$ = activeExerciseIndex$
+  .pipe(
+    map(index => {
+      if (index > 0) {
+        return (
+          <div
+            onclick={() => pushHistory({ url: exercises[index - 1].path })}
+            class={cx('btn blue', css`
+            display: flex;
+            justify-content: center;
+          `)}>
+            <i class="material-icons dp48">arrow_back</i>
+            Back
+          </div>
+        )
+      }
+    }),
+    share(),
+    takeUntil(destruction$)
+  )
+
+  const next$ = activeExerciseIndex$
+  .pipe(
+    map(index => {
+      if (exercises.length -1 > index) {
+        return (
+          <div
+            disabled
+            onclick={() => pushHistory({ url: exercises[index + 1].path })}
+            class={cx('btn blue', css`
               display: flex;
               justify-content: center;
             `)}>
-              <i class="material-icons dp48">arrow_back</i>
-              Back
-            </div>
-          )
-        } else {
-          setBack(<div />)
-        }
-        if (exercises.length -1 > index) {
-          setForward(
-            <div
-              disabled
-              onclick={() => pushHistory({ url: exercises[index + 1].path })}
-              class={cx('btn blue', css`
-                display: flex;
-                justify-content: center;
-              `)}>
-              Next
-              <i class="material-icons dp48">arrow_forward</i>
-            </div>
-          )
-        } else {
-          setForward(<div />)
-        }
-        return true
+            Next
+            <i class="material-icons dp48">arrow_forward</i>
+          </div>
+        )
       }
-    })
-  })
+    }),
+    share(),
+    takeUntil(destruction$)
+  )
 
   complete$
   .pipe(
     tag({ name: 'Complete', color: 'gold', icon: 'star' }),
-    withLatestFrom(forward$),
+    withLatestFrom(next$),
     takeUntil(destruction$)
   )
   .subscribe(([timelineEvent, forward]) => {
-    forward.removeAttribute('disabled')
+    if (forward) {
+      forward.removeAttribute('disabled')
+    }
   })
 
   return (
@@ -118,15 +142,15 @@ export default function Training ({ destruction$ }) {
           </ul>
         </nav>
         <div class={panel}>
-          <div element$={content$} />
+          <div single$={content$} />
         </div>
         <div class={css`
           width: 100%;
           display: flex;
           justify-content: space-between;
         `}>
-          <div element$={back$} />
-          <div element$={forward$} />
+          <div single$={back$} />
+          <div single$={next$} />
         </div>
       </div>
     </div>
