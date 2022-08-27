@@ -40,7 +40,7 @@ export default function Exercise ({ destruction$ }) {
         Each exercise will prompt you to change the code. The code you will change is in the corresponding exercise file in the repository `src/components/Exercises`.
         <br />
         <br />
-        While working on each exercise, use the <a href='https://www.npmjs.com/package/@taterer/rxjs-debugger' target='_blank'>RxJS Debugger</a> in the bottom left. It shows any active subscriptions (that have been tagged), and any events going through them. Tagged pipes will also have corresponding logs in the console.
+        While working on each exercise, use the <a href='https://www.npmjs.com/package/@taterer/rxjs-debugger' target='_blank'>RxJS Debugger</a> in the bottom left. It shows any active subscriptions that have been tagged, and any events going through them. Tagged pipes will also have corresponding logs in the console.
         <br />
         <br />
         Click on the buttons below to see how it looks.
