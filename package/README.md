@@ -47,7 +47,7 @@ const App = () => <div>
 A full example codebase with exercises for training can be found at: https://github.com/taterer/rx-jsx
 
 ### single$
-The magic of Rx-JSX is found in the only 2 abstractions added onto html elements as you know them: single$, and multi$. Using Rx-JSX you can define single$ on an html element. When the JSX element is created it will automatically subscribed to the observable passed to single$. The observable should emit HTML elements. EG:
+Define single$ on an html element. When the JSX element is created it will automatically subscribe to the observable passed to single$. The observable should emit HTML elements. EG:
 ```
 import { css } from '@emotion/css'
 import { of } from 'rxjs'
@@ -67,12 +67,14 @@ export default function App () {
   )
 }
 ```
-Using single$ will replace the HTML element with the latest emission.
+Using single$ will replace the HTML element with the latest emission. When single$ or multi$ has a pipe using takeUntil, it will remove the root element upon completion.
+
 ### multi$
 The multi$ property does the exact same thing as single$, except that it is append only. The previous element will not be removed with a new emission of the observable.
+
 ### Best practices
 - Name observables/subjects using the $ suffix.
-- Always use destruction$ observables in a takeUntil as the last operator in pipes before passing them to single$, multi$, or creating any subscriptions.
-- If things are not rendering properly, try throwing in a withAnimationFrame. ```import { withAnimationFrame } from @taterer/rx-jsx```
-- It can be useful to throw in a share() when setting up an observable for single$/multi$ so that other subscriptions end up with the same JSX element that is created.
+- Always use a destruction$ observable in a takeUntil as the last operator in pipes before passing them to single$, multi$, or creating any subscriptions.
+- If things are not rendering properly, try withAnimationFrame. ```import { withAnimationFrame } from @taterer/rx-jsx```
+- It can be useful to throw in a share() when setting up an observable for single$/multi$ so that other subscriptions end up with the same JSX element.
 - Use RxJS Debugger for tracking emissions https://www.npmjs.com/package/@taterer/rxjs-debugger
