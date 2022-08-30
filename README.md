@@ -13,6 +13,8 @@ For collaborative drawing using sockets, also start the server with `yarn start:
 # Learn RxJS
 Open the site in the browser to see the instructions for the exercises. Each exercise will require code changes, which should be done within the src directory of this repository.
 
+Learn how to use Rx-JSX at https://github.com/taterer/rx-jsx/tree/main/package
+
 # Theory
 ## Why?
 I thought it would be interesting to try using JSX without React, and try to base the application on streams, rather than objects. Though JSX is still a little objecty. The intention for the paradigm is to essentially not use state, but operate functionaly, and derive state at any point that it's needed, sharing pipelines if multiple components rely on similar things.
