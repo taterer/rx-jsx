@@ -1125,18 +1125,18 @@
   dependencies:
     tslib "^2.4.0"
 
-"@taterer/rx-jsx@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@taterer/rx-jsx/-/rx-jsx-1.0.2.tgz#82d3625eb91eb2c39888b2b298b45b7680141540"
-  integrity sha512-Me6okVFJ3Qq0cT+XHH5NUAalK/HoxaHeiAOyQPAr+jeH5UVzvoOT02v5X9ke9kuyYBFjlQd5VAja7OSWDRjoZw==
+"@taterer/rx-jsx@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@taterer/rx-jsx/-/rx-jsx-1.0.3.tgz#a8e3fbe23a4659f968abc636cc05d617e41ba552"
+  integrity sha512-dKJKEtyPsx75sv383XuYLFKqNL+vyhUssK5cgR6HfY30f+v5aOueL1evdzP7hjLh/Qe3bP9zTiqCLPaaGFnndA==
 
-"@taterer/rxjs-debugger@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@taterer/rxjs-debugger/-/rxjs-debugger-1.1.1.tgz#bd947f9471a69b0f30c8f061973ffb95e8f95c5a"
-  integrity sha512-zFg2+0aDMpwUEfaH1nLwqCsoPczz9iR0eUOtRVahqNqVwpWbmafhTmG59J6YEjCuOBtNHZcvofznofQOiUG0yA==
+"@taterer/rxjs-debugger@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@taterer/rxjs-debugger/-/rxjs-debugger-1.1.2.tgz#c78bea8ad063e62d2540094d6be083f02d458b73"
+  integrity sha512-h1Sawx+NKcFRBCZMECzymjJCBfhtHOR2BNScOL9VqGRBLzRWumxmvojjp4D5yhpPLWk1ajv2Sw2l/A1uYOyC9A==
   dependencies:
     "@emotion/css" "^11.9.0"
-    "@taterer/rx-jsx" "^1.0.2"
+    "@taterer/rx-jsx" "^1.0.3"
     uuid "^8.3.2"
 
 "@trysound/sax@0.2.0":

@@ -1,11 +1,12 @@
 {
   "name": "@taterer/rx-jsx",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Reactive Extensions with JSX (UI without React)",
   "scripts": {
     "build": "parcel build"
   },
-  "main": "index.ts",
+  "source": "index.ts",
+  "main": "dist/index.js",
   "author": "Taylor McKay",
   "bugs": {
     "url": "https://github.com/taterer/rx-jsx/issues"
