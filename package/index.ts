@@ -12,6 +12,12 @@ import {
 
 export type HTMLDestroyElement = HTMLElement & { destroy: Function }
 
+// Typescript complains when React is undefined while working with JSX,
+// even if you're not using it
+declare global {
+  const React: any
+}
+
 // Critical JSX replacement
 
 (window as any).rxjsx = (tag, props, ...children) => {
@@ -33,7 +39,6 @@ export type HTMLDestroyElement = HTMLElement & { destroy: Function }
           return current
         }, undefined)
       )
-      element.destroy = () => observable.complete()
       observable.subscribe({ complete: () => element.remove() })
     } else if (name === 'multi$') {
       const observable = value.pipe(
@@ -44,7 +49,6 @@ export type HTMLDestroyElement = HTMLElement & { destroy: Function }
           return current
         })
       )
-      element.destroy = () => observable.complete()
       observable.subscribe({ complete: () => element.remove() })
     } else {
       element.setAttribute(name, value.toString());
