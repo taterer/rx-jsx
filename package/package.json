@@ -1,6 +1,6 @@
 {
   "name": "@taterer/rx-jsx",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Reactive Extensions with JSX (UI without React)",
   "scripts": {
     "build": "parcel build"

@@ -20,7 +20,7 @@ declare global {
 
 // Critical JSX replacement
 
-(window as any).jsx = (tag, props, ...children) => {
+(window as any).rxjsx = (tag, props, ...children) => {
   if (typeof tag === "function") return tag(props, ...children);
   const element = document.createElement(tag);
 
@@ -61,6 +61,8 @@ declare global {
 
   return element;
 };
+
+(window as any).jsx = (window as any).rxjsx;
 
 const appendChild = (parent, child) => {
   if (Array.isArray(child))

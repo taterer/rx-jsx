@@ -28,6 +28,16 @@ or
 }
 ```
 
+tsconfig.json
+
+```
+{
+  "compilerOptions": {
+    "jsx": "react",
+  }
+}
+```
+
 ### Import
 
 ```
