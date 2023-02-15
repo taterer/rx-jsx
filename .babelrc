@@ -1,5 +1,3 @@
 {
-  "plugins": [
-    ["@babel/transform-react-jsx", { "pragma": "rxjsx" }]
-  ]
+  "plugins": [["@babel/transform-react-jsx", { "pragma": "jsx" }]]
 }
