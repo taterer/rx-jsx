@@ -16,6 +16,7 @@ export type HTMLDestroyElement = HTMLElement & { destroy: Function };
 // even if you're not using it
 declare global {
   const React: any;
+  const jsx: any;
 }
 
 // Critical JSX replacement
