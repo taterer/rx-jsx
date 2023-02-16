@@ -15,6 +15,7 @@ export type HTMLDestroyElement = HTMLElement & { destroy: Function };
 // Typescript complains when React is undefined while working with JSX,
 // even if you're not using it
 declare global {
+  const React: any;
   const JSX: any;
 }
 
