@@ -29,8 +29,6 @@
   ],
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.12.0",
-    "@babel/plugin-transform-react-jsx": "^7.17.3",
     "@babylonjs/core": "^5.4.0",
     "@babylonjs/loaders": "^5.4.0",
     "@parcel/reporter-bundle-analyzer": "^2.4.1",
@@ -42,7 +40,7 @@
   },
   "dependencies": {
     "@emotion/css": "^11.9.0",
-    "@taterer/rx-jsx": "^1.0.5",
+    "@taterer/rx-jsx": "^1.0.11",
     "@taterer/rxjs-debugger": "^1.1.2",
     "babylonjs": "^5.4.0",
     "babylonjs-loaders": "^5.4.0",
