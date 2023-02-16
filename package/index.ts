@@ -15,8 +15,7 @@ export type HTMLDestroyElement = HTMLElement & { destroy: Function };
 // Typescript complains when React is undefined while working with JSX,
 // even if you're not using it
 declare global {
-  const React: any;
-  const jsx: any;
+  const JSX: any;
 }
 
 // Critical JSX replacement
@@ -63,7 +62,7 @@ declare global {
   return element;
 };
 
-(window as any).jsx = (window as any).rxjsx;
+(window as any).JSX = (window as any).rxjsx;
 
 const appendChild = (parent, child) => {
   if (Array.isArray(child))

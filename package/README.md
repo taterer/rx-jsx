@@ -24,7 +24,7 @@ tsconfig.json
 {
   "compilerOptions": {
     "jsx": "react",
-    "jsxFactory": "jsx"
+    "jsxFactory": "JSX"
   }
 }
 ```
@@ -36,7 +36,7 @@ tsconfig.json
 ```
 {
   "plugins": [
-    ["@babel/transform-react-jsx", { "pragma": "jsx" }]
+    ["@babel/transform-react-jsx", { "pragma": "JSX" }]
   ]
 }
 ```
