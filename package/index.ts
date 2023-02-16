@@ -51,7 +51,7 @@ declare global {
       );
       observable.subscribe({ complete: () => element.remove() });
     } else {
-      element.setAttribute(name, value.toString());
+      element.setAttribute(name, value?.toString());
     }
   });
 

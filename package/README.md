@@ -18,6 +18,19 @@ or
 
 ### Setup
 
+tsconfig.json
+
+```
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "jsxFactory": "jsx"
+  }
+}
+```
+
+#### Alternative or additional to tsconfig
+
 .babelrc
 
 ```
@@ -25,16 +38,6 @@ or
   "plugins": [
     ["@babel/transform-react-jsx", { "pragma": "jsx" }]
   ]
-}
-```
-
-tsconfig.json
-
-```
-{
-  "compilerOptions": {
-    "jsx": "react",
-  }
 }
 ```
 
