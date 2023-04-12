@@ -8,7 +8,7 @@ Install dependencies with `yarn`
 
 Start the app with `yarn start`
 
-For collaborative drawing using sockets, also start the server with `yarn start:server` and set SOCKETS_ENABLED=true in a `.env` file.
+For collaborative drawing using sockets, also start the server with `yarn start:server` and set SOCKETS_ENABLED=true in a `.env` file. Note: enabling will require a hard refresh on the client.
 
 # Learn RxJS
 Open the site in the browser to see the instructions for the exercises. Each exercise will require code changes, which should be done within the src directory of this repository.

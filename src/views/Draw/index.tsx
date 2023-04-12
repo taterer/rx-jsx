@@ -170,6 +170,6 @@ export default function Draw ({ destruction$ }) {
   return <div class={panel}>
     <div single$={pending$} />
     <div single$={canvas$} />
-    <div single={clear$} />
+    <div single$={clear$} />
   </div>
 }

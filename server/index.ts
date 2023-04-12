@@ -1,19 +1,20 @@
-import { fromEvent, map, mergeMap, of, switchMap, takeUntil } from 'rxjs';
+import { fromEvent, map, mergeMap, of, shareReplay, switchMap, takeUntil } from 'rxjs';
 import { Server } from 'socket.io';
 
 const socketServer$ = of(new Server(3000, {
   cors: {
     origin: "http://localhost:1234"
   }
-}));
+})).pipe(shareReplay(1));
 
 const socketConnection$ = socketServer$.pipe(
   switchMap(io =>
     fromEvent<any>(io, 'connection')
     .pipe(
-      map(client => ({ io, client }))
+      map(client => ({ io, client })), 
     )
-  )
+  ),
+  shareReplay(1)
 )
 
 const socketDisconnect$ = socketConnection$.pipe(
