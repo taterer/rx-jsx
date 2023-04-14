@@ -45,7 +45,7 @@
     "babylonjs": "^5.4.0",
     "babylonjs-loaders": "^5.4.0",
     "gh-pages": "^3.2.3",
-    "rxjs": "^7.5.5",
+    "rxjs": "^7.8.0",
     "rxjs-spy": "^8.0.2",
     "socket.io": "^4.5.0",
     "socket.io-client": "^4.5.0",

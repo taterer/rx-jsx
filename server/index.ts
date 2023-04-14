@@ -9,9 +9,9 @@ const socketServer$ = of(new Server(3000, {
 
 const socketConnection$ = socketServer$.pipe(
   switchMap(io =>
-    fromEvent<any>(io, 'connection')
+    fromEvent(io, 'connection')
     .pipe(
-      map(client => ({ io, client })), 
+      map<any, any>(client => ({ io, client })), 
     )
   ),
   shareReplay(1)
